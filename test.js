@@ -30,8 +30,68 @@ mineDor.src="Clashofclans-Mine.png";
 
 
 canvas.addEventListener("click",function(e) {
-  console.log(e);
+console.log(e);
+if (e.x>75 && e.x<185&&e.y>120&&e.y<210){
+  var inter=setInterval(function(){
+    if (player.y>82) {
+      player.y-=player.speed;
+      player.frameY=3;
+      player.moving=true;
+    }
+    if (player.x>100) {
+      player.x-=player.speed;
+      player.frameY=1;
+      player.moving=true;
+    }
+    else if(player.x<100+player.speed&&player.y<82+player.speed) {
+      player.moving=false ;
+      clearInterval(inter);
+    }
+  }, 80);
+
+}
+
+
+
+
+
+
+
+/*
+player.x=90;
+player.y=120;*/
+
+/*
+  if (e.x>75 && e.x<185&&e.y>120&&e.y<210) {
+    if (!(player.x>0 && player.x<90&&player.y<120)){
+      keys[38]=true;
+      keys[37]=true;
+      player.moving=true;
+    }
+    else
+    {
+      delete keys[38];
+      delete keys[37];
+      player.y+=player.speed;
+      player.moving=false;
+    }
+
+  }*/
+
+
 })
+
+canvas.addEventListener("mousemove",function(e) {
+  console.log(e);
+    if (e.x>75 && e.x<185&&e.y>120&&e.y<210) {
+      alert("hahahaha");
+    canvas.style.cursor="pointer";
+  }
+  else {
+
+    canvas.style.cursor="default";
+  }
+});
 
 const donjon=new Image();
 donjon.src="donjon-006.png";
@@ -58,22 +118,28 @@ window.addEventListener("keyup",function(e){
 });
 
 function movePlayer() {
-  if (keys[38] && player.y>80) {
-    player.y-=player.speed;
-    player.frameY=3;
-  }
-  if (keys[37] && player.x>0) {
-    player.x-=player.speed;
-    player.frameY=1;
-  }
-  if (keys[40] && player.y<canvas.height-100) {
+console.log(player);
+  if (!(player.x>0 && player.x<90&&player.y<120)) {
+    if (keys[38] && player.y>80) {
+      player.y-=player.speed;
+      player.frameY=3;
+    }
+    if (keys[37] && player.x>0) {
+      player.x-=player.speed;
+      player.frameY=1;
+    }
+    if (keys[40] && player.y<canvas.height-100) {
+      player.y+=player.speed;
+      player.frameY=0;
+    }
+    if (keys[39] && player.x<canvas.width-player.width) {
+      player.x+=player.speed;
+      player.frameY=2;
+    }
+  }else {
     player.y+=player.speed;
-    player.frameY=0;
   }
-  if (keys[39] && player.x<canvas.width-player.width) {
-    player.x+=player.speed;
-    player.frameY=2;
-  }
+
 }
 
 function handlePlayerFrame(){
