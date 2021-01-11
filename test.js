@@ -1,172 +1,366 @@
+
+          //Proprietes du canvas
+
+
 const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
-
-var bienvenue=0;
-//  setTimeout(function(){ alert("Vous devez vous diriger vers la mine d'or pour recevoir de l'or !"); }, 2200);
-setTimeout(function(){ bienvenue=1; }, 2200);
-
 canvas.width=800;
 canvas.height=500;
+
+const positionCanevasX=canvas.offsetLeft;
+const positionCanevasY=canvas.offsetTop;
+
+
+
+
+
+
+                    //La popup de bienvenue sera afficher apres 2s et 200ms
+
+var bienvenue=0;                                //Ce champs sera initialement égale a 0
+setTimeout(function(){ bienvenue=1; }, 2200);   //Apres 2s et 200ms sera égale a 1 pour qu'il apparait dans la fonction animate()
+
+
+
+
 const keys=[];
 
-const mineDor={ //Positionnement de la mine d'or
+
+
+                  //Positionnement des éléments situées dans la carte
+
+
+const mineDor={             //Positionnement de la mine d'or
   xMin:-266,
   xMax:-166,
   yMin:-183,
   yMax:-93
 }
-//-240 -193
-const shopButton={
+
+
+const Donjon={             //Positionnement du donjon
+  xMin:114,
+  xMax:304,
+  yMin:-225,
+  yMax:-75
+}
+
+
+const shopButton={        //Positionnement du boutton qui permet d'obtenir le cadeau
   xMin:-266,
   xMax:-166,
   yMin:-240,
   yMax:-193
 }
 
-const popupButton={
+
+const popupButton={     //Positionnement du boutton OK du PopUp
   xMin:-50,
   xMax:50,
   yMin:73,
   yMax:105
 }
 
-const player={
-  x:400,  //position horizontale
-  y:250,  //position verticale
-  width:32,//la largeur du caractére
-  height:48,//la hauteur du caractere
-  frameX:0,//coordonnees horizontal du cadre
-  frameY:0,//coordonnees vertical du cadre
-  speed:6,
-  moving:false,
-  solde:0,
-  cadeauObtenu:false,
+const popupButtonClose={     //Positionnement du boutton close du PopUp
+  xMin:115,
+  xMax:145,
+  yMin:-138,
+  yMax:-112
 }
 
-const playerSprite=new Image();//Notre caractére "personnage"
+
+
+
+
+
+
+                        //Les éléments situées dans la carte
+
+
+const playerSprite=new Image();                       //Notre caractére "personnage"
 playerSprite.src="roshan.png";
-//l'arriere plan du canvas
-const background=new Image();
+
+const background=new Image();                         //l'arriere plan du canvas
 background.src="eea83dbbdef481f131348d77c7bf04a0.jpg";
+
+const shop=new Image();                               //Button shop
+shop.src="Untitled design.png";
+
+const mineDorImage=new Image();                       //La mine d'or
+mineDorImage.src="Clashofclans-Mine.png";
+
+const donjon=new Image();                             //Donjon
+donjon.src="donjon-006.png";
+
+const popup=new Image();                              //PopUp
+popup.src="pngtree-cool-game.png";
+
+
+
+
+
+
+
+
+
+
+                        //Les attributs du personnage
+
+
+const player={
+
+            x:400,            //position horizontale
+            y:250,            //position verticale
+            width:32,         //la largeur du caractére
+            height:48,        //la hauteur du caractere
+            frameX:0,         //coordonnees horizontal du cadre
+            frameY:0,         //coordonnees vertical du cadre
+            speed:6,
+            moving:false,
+            solde:0,
+            cadeauObtenu:false,
+
+}
+
+
 //La fonction qui va permettre de dessiner le caractére
 function drawSprite(img,sX,sY,sW,sH,dX,dY,dW,dH){
   ctx.drawImage(img,sX,sY,sW,sH,dX,dY,dW,dH);
 }
-const mineDorImage=new Image();
-mineDorImage.src="Clashofclans-Mine.png";
+
+
+
+
+
+
+
 
 var shopping=0;
 
-const positionCanevasX=canvas.offsetLeft;
-const positionCanevasY=canvas.offsetTop;
 
-canvas.addEventListener("click",function(e) {
+
+
+
+
+
+                                    //L'evenement du click sur le canevas
+
+
+
+                                      canvas.addEventListener("click",function(e) {
 
                     //La position du click sur le canevas
 
 var clickX= e.pageX-positionCanevasX;
 var clickY= e.pageY-positionCanevasY;
 
-                    //si l'utilisateur choisis de partir vers la mine d'or
+                    //si l'utilisateur clique sur la mine d'or
 
-if (clickX>mineDor.xMin && clickX<mineDor.xMax && clickY>mineDor.yMin &&clickY<mineDor.yMax){
+if (clickX>mineDor.xMin && clickX<mineDor.xMax && clickY>mineDor.yMin &&clickY<mineDor.yMax &&bienvenue==0&&player.cadeauObtenu==false){
+
   var inter=setInterval(function(){
 
     if (player.y>88) {
-      player.y-=player.speed;
-      player.frameY=3;
-      player.moving=true;
+
+            player.y-=player.speed;
+            player.frameY=3;
+            player.moving=true;
+
     }
     if (player.x>240) {
-      player.x-=player.speed;
-      player.frameY=1;
-      player.moving=true;
+
+            player.x-=player.speed;
+            player.frameY=1;
+            player.moving=true;
 
     }
     else if(player.x<240+player.speed&&player.y<88+player.speed) {
 
-      player.moving=false ;
-      clearInterval(inter);
-      shopping=1;
+            player.moving=false ;
+            clearInterval(inter);
+            shopping=1;
     }
 
   }, 30);
 
 }
-                        //lorsque l'utilisateur choisis de recevoir de l'or
+
+                    //si l'utilisateur clique sur le boutton de shop
 if (clickX>shopButton.xMin && clickX<shopButton.xMax&&clickY>shopButton.yMin&&clickY<shopButton.yMax&&shopping==1){
-  shop.src="50.png";
-  setTimeout(function(){ shopping=0;player.cadeauObtenu=true; }, 300);
-player.solde=50;
+
+            shop.src="50.png";
+            setTimeout(function(){ shopping=0;player.cadeauObtenu=true; }, 300);
+            player.solde=50;
+
 }
 
 
-if (clickX>popupButton.xMin && clickX<popupButton.xMax && clickY>popupButton.yMin &&clickY<popupButton.yMax){
-  bienvenue=0;
+                    //si l'utilisateur clique sur le boutton du popup
+if ((clickX>popupButton.xMin && clickX<popupButton.xMax && clickY>popupButton.yMin &&clickY<popupButton.yMax)||(clickX>popupButtonClose.xMin && clickX<popupButtonClose.xMax && clickY>popupButtonClose.yMin &&clickY<popupButtonClose.yMax )){
+
+            bienvenue=0;
 }
 
 
+                    //si l'utilisateur clique sur le donjon
+if (clickX>Donjon.xMin && clickX<Donjon.xMax&&clickY>Donjon.yMin&&clickY<Donjon.yMax&&player.cadeauObtenu==true){
+
+var inter1=setInterval(function(){
+
+  if (player.x<490) {
+
+          player.x+=player.speed;
+          player.frameY=2;
+          player.moving=true;
+
+  }
+  if (player.y<130) {
+
+          player.y+=player.speed;
+          player.frameY=0;
+          player.moving=true;
+
+  }
+  else if(player.x>490-player.speed&&player.y>130-player.speed) {
+
+          player.moving=false ;
+          clearInterval(inter);
+          //shopping=1;
+  }
+},30);
+  //alert("khdaama");
+
+}
 });
 
-const shop=new Image();
-shop.src="Untitled design.png";
-
-//var shop = GIF();
-//shop.load("unnamed.gif");
 
 
-canvas.addEventListener("mousemove",function(e) {
+
+
+
+
+
+
+
+
+                            //L'evenement mousemove sur le canevas
+
+
+
+                            canvas.addEventListener("mousemove",function(e) {
+
+                              //La position du mousemove sur le canevas
   var mouseX= e.pageX-positionCanevasX;
   var mouseY= e.pageY-positionCanevasY;
 
-    if (mouseX>mineDor.xMin && mouseX<mineDor.xMax && mouseY>mineDor.yMin &&mouseY<mineDor.yMax) {
-if (shopping==0&&player.cadeauObtenu==false) {
-  canvas.style.cursor="pointer";
-}else {
-  canvas.style.cursor="no-drop";
-}
+
+                            //si l'utilisateur survol la mine d'or
+
+    if (mouseX>mineDor.xMin && mouseX<mineDor.xMax && mouseY>mineDor.yMin &&mouseY<mineDor.yMax)
+        {
+
+
+                if (shopping==0&&player.cadeauObtenu==false) {
+                  if (bienvenue==1) {
+                    canvas.style.cursor="default";
+                  }else{
+                    canvas.style.cursor="pointer";
+                  }
+
+                }else {
+                  canvas.style.cursor="no-drop";
+                }
+
+        }
+
+                          //si l'utilisateur survol le boutton du shop
+
+  else if (mouseX>shopButton.xMin && mouseX<shopButton.xMax&&mouseY>shopButton.yMin&&mouseY<shopButton.yMax&&shopping==1)
+        {
+
+                canvas.style.cursor="pointer";
+        }
+
+
+                          //si l'utilisateur survol le boutton OK du popup
+
+  else if ((mouseX>popupButton.xMin && mouseX<popupButton.xMax&&mouseY>popupButton.yMin&&mouseY<popupButton.yMax&&bienvenue==1)||(mouseX>popupButtonClose.xMin && mouseX<popupButtonClose.xMax && mouseY>popupButtonClose.yMin &&mouseY<popupButtonClose.yMax ))
+        {
+
+            canvas.style.cursor="pointer";
+
+        }
+
+
+                          //si l'utilisateur srvol sur le donjon
+  else if (mouseX>Donjon.xMin && mouseX<Donjon.xMax&&mouseY>Donjon.yMin&&mouseY<Donjon.yMax&&player.cadeauObtenu==true){
+
+              canvas.style.cursor="pointer";
 
   }
-  else if (mouseX>shopButton.xMin && mouseX<shopButton.xMax&&mouseY>shopButton.yMin&&mouseY<shopButton.yMax&&shopping==1) {
 
-  canvas.style.cursor="pointer";
-}
-else if (mouseX>popupButton.xMin && mouseX<popupButton.xMax&&mouseY>popupButton.yMin&&mouseY<popupButton.yMax&&bienvenue==1) {
 
-canvas.style.cursor="pointer";
-}
-  else {
+      else
+      {
 
-    canvas.style.cursor="default";
-  }
+        canvas.style.cursor="default";
+      }
 });
 
-const donjon=new Image();
-donjon.src="donjon-006.png";
 
-const popup=new Image();
-popup.src="pngtree-cool-game.png";
 
-var solde=document.getElementById("solde");
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(background,0,0,canvas.width,canvas.height);
-  ctx.drawImage(mineDorImage,127,50,120,120);
-  ctx.drawImage(donjon,500,-10,256,256);
-  drawSprite(playerSprite,player.width*player.frameX,player.height*player.frameY,player.width,player.height,player.x,player.y,player.width,player.height);
 
-  if (shopping==1&&player.cadeauObtenu===false) {
-    ctx.drawImage(shop,127,10,100,60);
-  }
-  if (bienvenue==1) {
-    ctx.drawImage(popup,canvas.width/2-150,canvas.height/2-150,300,300);
-  }
-    //movePlayer();
-  handlePlayerFrame();
-  requestAnimationFrame(animate);
-  solde.innerText=player.solde;
+
+
+
+
+
+
+                            //La fonction principale qui annime le canvas selon les conditions
+
+function animate()
+{
+
+              //Dessine les éléments sur le canvas
+
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(background,0,0,canvas.width,canvas.height);
+            ctx.drawImage(mineDorImage,127,50,120,120);
+            ctx.drawImage(donjon,500,-10,256,256);
+
+            //Dessine le sprite "personnage"
+
+            drawSprite(playerSprite,player.width*player.frameX,player.height*player.frameY,player.width,player.height,player.x,player.y,player.width,player.height);
+
+              //dessine le boutton du shop quand il a le droit
+
+      if (shopping==1&&player.cadeauObtenu===false)
+          {
+            ctx.drawImage(shop,127,10,100,60);
+          }
+
+              //Affiche la popUp
+
+      if (bienvenue==1)
+          {
+            ctx.drawImage(popup,canvas.width/2-150,canvas.height/2-150,300,300);
+          }
+
+            //movePlayer();
+            handlePlayerFrame();
+            requestAnimationFrame(animate);
+            solde.innerText=player.solde;
 }
 animate();
+
+
+
+
+
+
+
+
+
 
 window.addEventListener("keydown",function(e){
   keys[e.keyCode]=true; //on ajoute la touche
