@@ -6,11 +6,19 @@ const canvas=document.getElementById("canvas");
 const ctx=canvas.getContext("2d");
 canvas.width=800;
 canvas.height=500;
+var gameover =0 ;
+var condition=0;
+var gui=0;
 
 const positionCanevasX=canvas.offsetLeft;
 const positionCanevasY=canvas.offsetTop;
 
 
+
+
+//---------------------------------LOCATION PRINCIPALE---------------------------------//
+var currentFileLocation = window.location.pathname;
+var mainPath = currentFileLocation.substring(0, currentFileLocation.lastIndexOf('/'));
 
 
 
@@ -29,6 +37,12 @@ const keys=[];
 
                   //Positionnement des éléments situées dans la carte
 
+const Guilde={             //Positionnement de la guilde
+    xMin:-266,
+    xMax:-69,
+    yMin:-35,
+    yMax:165
+  }
 
 const mineDor={             //Positionnement de la mine d'or
   xMin:-266,
@@ -55,21 +69,24 @@ const shopButton={        //Positionnement du boutton qui permet d'obtenir le ca
 
 
 const popupButton={     //Positionnement du boutton OK du PopUp
-  xMin:-50,
-  xMax:50,
-  yMin:73,
-  yMax:105
+  xMin:-22,
+  xMax:22,
+  yMin:47,
+  yMax:95
 }
 
-const popupButtonClose={     //Positionnement du boutton close du PopUp
-  xMin:115,
+const popupGuildeCloseButton={     //Positionnement du boutton CLOSE du PopUp guilde
+  xMin:112,
   xMax:145,
-  yMin:-138,
-  yMax:-112
+  yMin:-143,
+  yMax:-116
 }
-
-
-
+const popupGuildeMineur1={     //Positionnement du boutton CLOSE du PopUp guilde
+  xMin:87,
+  xMax:112,
+  yMin:-55,
+  yMax:-27
+}
 
 
 
@@ -78,26 +95,34 @@ const popupButtonClose={     //Positionnement du boutton close du PopUp
 
 
 const playerSprite=new Image();                       //Notre caractére "personnage"
-playerSprite.src="roshan.png";
+playerSprite.src="images/sprite.png";
 
 const background=new Image();                         //l'arriere plan du canvas
-background.src="eea83dbbdef481f131348d77c7bf04a0.jpg";
+background.src="images/background.jpg";
 
 const shop=new Image();                               //Button shop
-shop.src="Untitled design.png";
+shop.src="images/buttonShop.png";
 
 const mineDorImage=new Image();                       //La mine d'or
-mineDorImage.src="Clashofclans-Mine.png";
+mineDorImage.src="images/Mine.png";
 
 const donjon=new Image();                             //Donjon
-donjon.src="donjon-006.png";
+donjon.src="images/Donjon.png";
 
 const popup=new Image();                              //PopUp
-popup.src="pngtree-cool-game.png";
+popup.src="images/bienvenue.png";
 
+const niveau = new Image();
+niveau.src = "images/Character Niveau.png";
 
+const or = new Image();
+or.src = "images/banniere.png";
 
+const guilde = new Image();
+guilde.src = "images/guilde mineur.png";
 
+const popguilde = new Image();
+popguilde.src =  "images/popguilde.png";
 
 
 
@@ -119,6 +144,7 @@ const player={
             moving:false,
             solde:0,
             cadeauObtenu:false,
+            niveau:1
 
 }
 
@@ -154,6 +180,8 @@ var shopping=0;
 var clickX= e.pageX-positionCanevasX;
 var clickY= e.pageY-positionCanevasY;
 
+//alert(clickX);
+//alert(clickY);
                     //si l'utilisateur clique sur la mine d'or
 
 if (clickX>mineDor.xMin && clickX<mineDor.xMax && clickY>mineDor.yMin &&clickY<mineDor.yMax &&bienvenue==0&&player.cadeauObtenu==false){
@@ -188,36 +216,61 @@ if (clickX>mineDor.xMin && clickX<mineDor.xMax && clickY>mineDor.yMin &&clickY<m
                     //si l'utilisateur clique sur le boutton de shop
 if (clickX>shopButton.xMin && clickX<shopButton.xMax&&clickY>shopButton.yMin&&clickY<shopButton.yMax&&shopping==1){
 
-            shop.src="50.png";
+            shop.src="images/50.png";
             setTimeout(function(){ shopping=0;player.cadeauObtenu=true; }, 300);
             player.solde=50;
-
+            condition=1;
 }
+//SI l'utilisateur clique sur la guilde
+
+if (clickX > Guilde.xMin && clickX < Guilde.xMax && clickY > Guilde.yMin && clickY < Guilde.yMax) {
+        var inter3 = setInterval(function() {
+            if (player.y < 350) {
+                player.y += player.speed;
+                player.frameY = 0;
+                player.moving = true;
+            }
+            if (player.x < 330) {
+                player.x += player.speed;
+                player.frameY = 2;
+                player.moving = true;
+
+            } else if (player.x > 330 - player.speed && player.y > 350 - player.speed) {
+                player.moving = false;
+                clearInterval(inter3);
+                gui = 1;
+            }
+        }, 30);
 
 
-                    //si l'utilisateur clique sur le boutton du popup
-if ((clickX>popupButton.xMin && clickX<popupButton.xMax && clickY>popupButton.yMin &&clickY<popupButton.yMax)||(clickX>popupButtonClose.xMin && clickX<popupButtonClose.xMax && clickY>popupButtonClose.yMin &&clickY<popupButtonClose.yMax )){
+    }
+
+
+                    //si l'utilisateur clique sur le boutton du popup bienvenue
+if (clickX>popupButton.xMin && clickX<popupButton.xMax && clickY>popupButton.yMin &&clickY<popupButton.yMax){
 
             bienvenue=0;
 }
 
 
+
+
+
                     //si l'utilisateur clique sur le donjon
-if (clickX>Donjon.xMin && clickX<Donjon.xMax&&clickY>Donjon.yMin&&clickY<Donjon.yMax&&player.cadeauObtenu==true){
+if (clickX>Donjon.xMin && clickX<Donjon.xMax&&clickY>Donjon.yMin&&clickY<Donjon.yMax&&player.cadeauObtenu==true&&gui==0){
 
 var inter1=setInterval(function(){
 
   if (player.x<490) {
-
           player.x+=player.speed;
           player.frameY=2;
           player.moving=true;
 
   }
-  if (player.y<130) {
+  if (player.y>130) {
 
-          player.y+=player.speed;
-          player.frameY=0;
+          player.y-=player.speed;
+          player.frameY=3;
           player.moving=true;
 
   }
@@ -229,6 +282,29 @@ var inter1=setInterval(function(){
   }
 },30);
   //alert("khdaama");
+
+}
+
+
+
+//si l'utilisateur decide de fermer la popup des mineurs
+
+
+if (clickX>popupGuildeCloseButton.xMin && clickX<popupGuildeCloseButton.xMax&&clickY>popupGuildeCloseButton.yMin&&clickY<popupGuildeCloseButton.yMax&&gui==1){
+
+  gui=0;
+}
+
+
+
+//si l'utilisateur decide d'acheter le premier mineur
+if (clickX>popupGuildeMineur1.xMin && clickX<popupGuildeMineur1.xMax&&clickY>popupGuildeMineur1.yMin&&clickY<popupGuildeMineur1.yMax&&gui==1){
+if(player.solde>10||player.solde==10){
+  player.solde-=10;
+  gui=0;
+}else{
+  alert("Vous n'avez pas assez d'or");
+}
 
 }
 });
@@ -284,7 +360,7 @@ var inter1=setInterval(function(){
 
                           //si l'utilisateur survol le boutton OK du popup
 
-  else if ((mouseX>popupButton.xMin && mouseX<popupButton.xMax&&mouseY>popupButton.yMin&&mouseY<popupButton.yMax&&bienvenue==1)||(mouseX>popupButtonClose.xMin && mouseX<popupButtonClose.xMax && mouseY>popupButtonClose.yMin &&mouseY<popupButtonClose.yMax ))
+  else if (mouseX>popupButton.xMin && mouseX<popupButton.xMax&&mouseY>popupButton.yMin&&mouseY<popupButton.yMax&&bienvenue==1)
         {
 
             canvas.style.cursor="pointer";
@@ -293,13 +369,28 @@ var inter1=setInterval(function(){
 
 
                           //si l'utilisateur srvol sur le donjon
-  else if (mouseX>Donjon.xMin && mouseX<Donjon.xMax&&mouseY>Donjon.yMin&&mouseY<Donjon.yMax&&player.cadeauObtenu==true){
+  else if (mouseX>Donjon.xMin && mouseX<Donjon.xMax&&mouseY>Donjon.yMin&&mouseY<Donjon.yMax&&player.cadeauObtenu==true&&gui==0){
 
               canvas.style.cursor="pointer";
 
   }
 
+  else if (mouseX > Guilde.xMin && mouseX < Guilde.xMax && mouseY > Guilde.yMin && mouseY < Guilde.yMax && player.cadeauObtenu == true && condition==1) {
 
+          canvas.style.cursor = "pointer";
+
+
+      }
+
+      //si l'utilisateur survol sur la touche close du popup guilde
+else if ((mouseX>popupGuildeCloseButton.xMin && mouseX<popupGuildeCloseButton.xMax&&mouseY>popupGuildeCloseButton.yMin&&mouseY<popupGuildeCloseButton.yMax&&gui==1)
+||
+(mouseX>popupGuildeMineur1.xMin && mouseX<popupGuildeMineur1.xMax&&mouseY>popupGuildeMineur1.yMin&&mouseY<popupGuildeMineur1.yMax&&gui==1))
+{
+
+canvas.style.cursor="pointer";
+
+}
       else
       {
 
@@ -327,10 +418,18 @@ function animate()
             ctx.drawImage(background,0,0,canvas.width,canvas.height);
             ctx.drawImage(mineDorImage,127,50,120,120);
             ctx.drawImage(donjon,500,-10,256,256);
+            ctx.drawImage(niveau, -10, 435, 256, 75);
+            ctx.drawImage(or, 550, 435, 256, 75);
+            if (condition==1){
+            ctx.drawImage(guilde, 110, 180, 256, 256);
+            }
 
             //Dessine le sprite "personnage"
-
             drawSprite(playerSprite,player.width*player.frameX,player.height*player.frameY,player.width,player.height,player.x,player.y,player.width,player.height);
+
+            if (gui==1){
+              ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
+            }
 
               //dessine le boutton du shop quand il a le droit
 
@@ -349,7 +448,10 @@ function animate()
             //movePlayer();
             handlePlayerFrame();
             requestAnimationFrame(animate);
-            solde.innerText=player.solde;
+            ctx.font = "30px Arial";
+            ctx.fillStyle = "yellow";
+            ctx.fillText(player.solde, 660, 482);
+            ctx.fillText("Niveau :"+player.niveau, 80, 482);
 }
 animate();
 
