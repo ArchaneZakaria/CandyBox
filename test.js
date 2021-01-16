@@ -15,9 +15,7 @@ var arme = 0;
 var armure = 0;
 var potion = 0;
 var shopping = 0;
-var hideMineur1=0;//cette variable fait disparaitre le mineur dans la mine
-var mineur1Actif=0;
-
+var timer;
 
 const positionCanevasX = canvas.offsetLeft;
 const positionCanevasY = canvas.offsetTop;
@@ -233,6 +231,11 @@ const m1 = {
     frameY: 0, //coordonnees vertical du cadre
     speed: 4,
     moving: false,
+    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
+    mineurActif:0,
+    job:0,
+    dispo:0
+
 
 }
 const m2 = {
@@ -245,7 +248,9 @@ const m2 = {
     frameY: 0, //coordonnees vertical du cadre
     speed: 6,
     moving: false,
-
+    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
+    mineurActif:0,
+    job:0,
 }
 const m3 = {
 
@@ -257,6 +262,9 @@ const m3 = {
     frameY: 0, //coordonnees vertical du cadre
     speed: 6,
     moving: false,
+    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
+    mineurActif:0,
+    job:0,
 
 }
 ////////////////////////////////////Les attributs des personnages////////////////////////////////////////
@@ -428,7 +436,7 @@ canvas.addEventListener("click", function(e) {
         if (player.solde > 10 || player.solde == 10) {
             player.solde -= 10;
             gui = 0;
-            mineur1 += 1
+            m1.dispo += 1
         } else {
             alert("Vous n'avez pas assez d'or");
         }
@@ -456,7 +464,7 @@ canvas.addEventListener("click", function(e) {
         }
 
     }
-    if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && mineur1 >= 1 && gui == 0) {
+    if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0) {
 
         var inter1 = setInterval(function() {
 
@@ -477,11 +485,11 @@ canvas.addEventListener("click", function(e) {
 
                 m1.moving = false;
                 clearInterval(inter);
-                shopping = 1;
-                hideMineur1=1;
-                mineur1Actif=1;
+                //shopping = 1;
+                m1.hideMineur=1;
+                m1.mineurActif=1;
                 setTimeout(function() {
-                    mineur1Actif=0;
+                  m1.mineurActif=0;
                 }, 5000);
             }
 
@@ -570,11 +578,10 @@ canvas.addEventListener("mousemove", function(e) {
         //si l'utilisateur survol sur la touche mineur 3
     } else if (mouseX > popupGuildeMineur3.xMin && mouseX < popupGuildeMineur3.xMax && mouseY > popupGuildeMineur3.yMin && mouseY < popupGuildeMineur3.yMax && gui == 1) {
         canvas.style.cursor = "pointer";
-    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)&&hideMineur1==0) {
+    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && ((m1.dispo >= 1 && m1.hideMineur==0)|| mineur2 >= 1 || mineur3 >= 1)) {
         canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche travailler
     }
-    //else if (mouseX > stop.xMin && mouseX < stop.xMax && mouseY > stop.yMin && mouseY < stop.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)) {
-      //  canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche stop}
+
     else {
 
         canvas.style.cursor = "default";
@@ -629,24 +636,25 @@ function animate() {
     if (gui == 1) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (mineur1 >= 1 && gui == 0 &&hideMineur1==0) {
+    if (m1.dispo >= 1 && gui == 0 &&m1.hideMineur==0) {
         ctx.drawImage(travail, -2, -4, 220, 75);
       //  ctx.drawImage(stopt, 0, 34, 215, 65);
 
-          for (i = 0; i < mineur1; i++) {
+          for (i = 0; i < m1.dispo; i++) {
               drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
           }
 
 
     }
-    if (hideMineur1==1) {
+    if (m1.hideMineur==1) {
       ctx.drawImage(piocheMineur,127,10,100,60);
     }
     if (mineur2 == 1 && gui == 0) {
-        drawSprite(mineur2sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
+      ctx.drawImage(travail, -2, -4, 220, 75);
+
+        drawSprite(mineur2sprite, m2.width * m2.frameX, m2.height * m2.frameY, m2.width, m2.height, m2.x, m2.y, m2.width, m2.height)
         mineur2dispo = 1;
-        ctx.drawImage(travail, -2, -4, 220, 75);
-        ctx.drawImage(stopt, 0, 34, 215, 65);
+
     }
     if (mineur3 == 1 && gui == 0) {
         drawSprite(mineur3sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
@@ -675,16 +683,24 @@ function animate() {
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
     ctx.fillText("Niveau :" + player.niveau, 80, 482);
-    
-      if(mineur1Actif==1){
-        player.solde+=1;
-      }
+
+
 
 }
 animate();
 
 
 
+function miner(){
+    clearTimeout(timer);
+    if (m1.mineurActif==1){
+    m1.job++;
+    player.solde += 1;
+}
+
+    if(m1.job < 30){ timer = setTimeout(miner,2000); }
+}
+miner();
 //////////////////////////// Fin Dessin ////////////////////////////
 
 
