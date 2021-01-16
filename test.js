@@ -15,6 +15,9 @@ var arme = 0;
 var armure = 0;
 var potion = 0;
 var shopping = 0;
+var hideMineur1=0;//cette variable fait disparaitre le mineur dans la mine
+var mineur1Actif=0;
+
 
 const positionCanevasX = canvas.offsetLeft;
 const positionCanevasY = canvas.offsetTop;
@@ -82,6 +85,8 @@ magasinArmure.src = "images/shoparmure.png";
 const magasinPotion = new Image();
 magasinPotion.src = "images/shoppotion.png";
 
+const piocheMineur = new Image();
+piocheMineur.src = "images/pioche.png";
 
 /////////////:-------------------FIN Les éléments situées dans la carte ( SOURCE IMAGE )------------------/////////:
 
@@ -473,6 +478,11 @@ canvas.addEventListener("click", function(e) {
                 m1.moving = false;
                 clearInterval(inter);
                 shopping = 1;
+                hideMineur1=1;
+                mineur1Actif=1;
+                setTimeout(function() {
+                    mineur1Actif=0;
+                }, 5000);
             }
 
         }, 30);
@@ -560,11 +570,12 @@ canvas.addEventListener("mousemove", function(e) {
         //si l'utilisateur survol sur la touche mineur 3
     } else if (mouseX > popupGuildeMineur3.xMin && mouseX < popupGuildeMineur3.xMax && mouseY > popupGuildeMineur3.yMin && mouseY < popupGuildeMineur3.yMax && gui == 1) {
         canvas.style.cursor = "pointer";
-    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)) {
+    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)&&hideMineur1==0) {
         canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche travailler
-    } else if (mouseX > stop.xMin && mouseX < stop.xMax && mouseY > stop.yMin && mouseY < stop.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)) {
-        canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche stop
-    } else {
+    }
+    //else if (mouseX > stop.xMin && mouseX < stop.xMax && mouseY > stop.yMin && mouseY < stop.yMax && (mineur1 >= 1 || mineur2 >= 1 || mineur3 >= 1)) {
+      //  canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche stop}
+    else {
 
         canvas.style.cursor = "default";
     }
@@ -594,6 +605,10 @@ function animate() {
     if (condition == 1) {
         ctx.drawImage(guilde, 110, 180, 256, 256);
     }
+    if (pop == 0) // hadi drtha bach nkhbi perso mli ykhrj chi pop walakin ghir 7ydha
+    {
+        drawSprite(playerSprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height);
+    }
     if (arme == 1) {
         ctx.drawImage(magasinArme, canvas.width / 2 - 175, canvas.height / 2 - 175, 350, 350);
     }
@@ -609,20 +624,23 @@ function animate() {
     }
 
     //Dessine le sprite "personnage"
-    if (pop == 0) // hadi drtha bach nkhbi perso mli ykhrj chi pop walakin ghir 7ydha 
-    {
-        drawSprite(playerSprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height);
-    }
+
 
     if (gui == 1) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (mineur1 >= 1 && gui == 0) {
+    if (mineur1 >= 1 && gui == 0 &&hideMineur1==0) {
         ctx.drawImage(travail, -2, -4, 220, 75);
-        ctx.drawImage(stopt, 0, 34, 215, 65);
-        for (i = 0; i < mineur1; i++) {
-            drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
-        }
+      //  ctx.drawImage(stopt, 0, 34, 215, 65);
+
+          for (i = 0; i < mineur1; i++) {
+              drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
+          }
+
+
+    }
+    if (hideMineur1==1) {
+      ctx.drawImage(piocheMineur,127,10,100,60);
     }
     if (mineur2 == 1 && gui == 0) {
         drawSprite(mineur2sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
@@ -657,6 +675,11 @@ function animate() {
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
     ctx.fillText("Niveau :" + player.niveau, 80, 482);
+    
+      if(mineur1Actif==1){
+        player.solde+=1;
+      }
+
 }
 animate();
 
