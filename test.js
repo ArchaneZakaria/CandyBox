@@ -16,6 +16,11 @@ var armure = 0;
 var potion = 0;
 var shopping = 0;
 var timer;
+var arcMagasin=1;
+var armureMagasin=0;
+var potionMagasin=0;
+
+
 
 const positionCanevasX = canvas.offsetLeft;
 const positionCanevasY = canvas.offsetTop;
@@ -119,7 +124,7 @@ const Donjon = { //Positionnement du donjon
 }
 
 
-const shopButton = { //Positionnement du boutton qui permet d'obtenir le cadeau
+const cadeauButton = { //Positionnement du boutton qui permet d'obtenir le cadeau
     xMin: -266,
     xMax: -166,
     yMin: -240,
@@ -176,6 +181,60 @@ const magasinButton = { //Positionnement du boutton CLOSE du PopUp guilde
     yMin: 134,
     yMax: 190
 }
+
+const closeShopButton = { //Positionnement du boutton CLOSE du magasin
+    xMin: 114,
+    xMax: 138,
+    yMin: -173,
+    yMax: -150
+}
+
+
+const arcShopButton = { //Positionnement du boutton arc du magasin
+    xMin: -109,
+    xMax: -68,
+    yMin:-143 ,
+    yMax: -85
+}
+
+
+const armureShopButton = { //Positionnement du boutton armure du magasin
+    xMin: -24,
+    xMax: 18,
+    yMin:-143 ,
+    yMax: -85
+}
+
+
+const potionShopButton = { //Positionnement du boutton potion du magasin
+    xMin: 66,
+    xMax: 106,
+    yMin:-143 ,
+    yMax: -85
+}
+
+const firstShopButton = { //Positionnement du premier button du magasin
+    xMin: 64,
+    xMax: 104,
+    yMin:-44 ,
+    yMax: -27
+}
+
+const secondShopButton = { //Positionnement du deuxieme button du magasin
+    xMin: 64,
+    xMax: 104,
+    yMin:29,
+    yMax: 51
+}
+
+const thirdShopButton = { //Positionnement du troisiéme button du magasin
+    xMin: 64,
+    xMax: 104,
+    yMin:107,
+    yMax: 126
+}
+
+
 //////////////////////////// FinPositionnement des éléments situées dans la carte pour//////////////////////////////////
 
 
@@ -218,7 +277,11 @@ const player = {
     moving: false,
     solde: 0,
     cadeauObtenu: false,
-    niveau: 1
+    niveau: 1,
+    attack:0,
+    defense:0,
+    pointVie:100
+
 
 }
 const m1 = {
@@ -311,8 +374,8 @@ canvas.addEventListener("click", function(e) {
     var clickX = e.pageX - positionCanevasX;
     var clickY = e.pageY - positionCanevasY;
 
-    //alert(clickX);
-    //alert(clickY);
+//alert(clickX);
+//alert(clickY);
     //si l'utilisateur clique sur la mine d'or
 
     if (clickX > mineDor.xMin && clickX < mineDor.xMax && clickY > mineDor.yMin && clickY < mineDor.yMax && bienvenue == 0 && player.cadeauObtenu == false) {
@@ -344,7 +407,7 @@ canvas.addEventListener("click", function(e) {
     }
 
     //si l'utilisateur clique sur le boutton de shop
-    if (clickX > shopButton.xMin && clickX < shopButton.xMax && clickY > shopButton.yMin && clickY < shopButton.yMax && shopping == 1) {
+    if (clickX > cadeauButton.xMin && clickX < cadeauButton.xMax && clickY > cadeauButton.yMin && clickY < cadeauButton.yMax && shopping == 1) {
 
         shop.src = "images/50.png";
         setTimeout(function() {
@@ -389,7 +452,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le donjon
-    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && player.cadeauObtenu == true && gui == 0) {
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && player.cadeauObtenu == true && gui == 0&&arme==0) {
 
         var inter1 = setInterval(function() {
 
@@ -497,6 +560,108 @@ canvas.addEventListener("click", function(e) {
         //alert("khdaama");
 
     }
+
+
+
+                                            //si la popUp du magasin est afficher
+    if(arme==1){
+
+
+      //si l'utilisateur decide de fermer le magasin
+          if (clickX > closeShopButton.xMin && clickX < closeShopButton.xMax && clickY > closeShopButton.yMin && clickY < closeShopButton.yMax && arme == 1) {
+              arme = 0;
+          }
+
+          //si l'utilisateur decide de naviguer vers le magasin d'arc
+              if (clickX > arcShopButton.xMin && clickX < arcShopButton.xMax && clickY > arcShopButton.yMin && clickY < arcShopButton.yMax ) {
+                  magasinArme.src = "images/shoparc.png";
+                  arcMagasin=1;
+                  armureMagasin=0;
+                  potionMagasin=0;
+              }
+
+        //si l'utilisateur decide de naviguer vers le magasin d'armure
+            if (clickX > armureShopButton.xMin && clickX < armureShopButton.xMax && clickY > armureShopButton.yMin && clickY < armureShopButton.yMax ) {
+                magasinArme.src = "images/shoparmure.png";
+                arcMagasin=0;
+                armureMagasin=1;
+                potionMagasin=0;
+            }
+
+
+        //si l'utilisateur decide de naviguer vers le magasin de potion
+            if (clickX > potionShopButton.xMin && clickX < potionShopButton.xMax && clickY > potionShopButton.yMin && clickY < potionShopButton.yMax ) {
+                magasinArme.src = "images/shoppotion.png";
+                arcMagasin=0;
+                armureMagasin=0;
+                potionMagasin=1;
+            }
+
+            //si l'utilisateur est dans le magasin d'arc
+            if(arcMagasin==1){
+                if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>10||player.solde==10)) {
+                  player.solde-=10;
+                  arme=0;
+                  player.attack+=5;
+                }
+                if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>30||player.solde==30) ) {
+                  player.solde-=30;
+                  arme=0;
+                  player.attack+=10;
+                }
+                if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>50||player.solde==50)) {
+                  player.solde-=50;
+                  arme=0;
+                  player.attack+=15;
+                }
+            }
+
+            //si l'utilisateur est dans le magasin d'armure
+            if(armureMagasin==1){
+              if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>10||player.solde==10)) {
+                player.solde-=10;
+                arme=0;
+                player.defense+=5;
+              }
+              if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>30||player.solde==30) ) {
+                player.solde-=30;
+                arme=0;
+                player.defense+=10;
+              }
+              if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>50||player.solde==50)) {
+                player.solde-=50;
+                arme=0;
+                player.defense+=15;
+              }
+            }
+
+            //si l'utilisateur est dans le magasin de potion
+            if(potionMagasin==1){
+              if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>5||player.solde==5)) {
+                player.solde-=5;
+                arme=0;
+                player.pointVie+=25;
+              }
+              if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>15||player.solde==15) ) {
+                player.solde-=15;
+                arme=0;
+                player.pointVie+=50;
+              }
+              if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>20||player.solde==20)) {
+                player.solde-=20;
+                arme=0;
+                player.pointVie+=75;
+              }
+              
+            }
+
+
+    }
+
+
+
+
+
 });
 
 //-------------------------------------------------Fin L'evenement du click sur le canevas--------------------------//
@@ -533,7 +698,7 @@ canvas.addEventListener("mousemove", function(e) {
     }
 
     //si l'utilisateur survol le boutton du shop
-    else if (mouseX > shopButton.xMin && mouseX < shopButton.xMax && mouseY > shopButton.yMin && mouseY < shopButton.yMax && shopping == 1) {
+    else if (mouseX > cadeauButton.xMin && mouseX < cadeauButton.xMax && mouseY > cadeauButton.yMin && mouseY < cadeauButton.yMax && shopping == 1) {
 
         canvas.style.cursor = "pointer";
     }
@@ -548,7 +713,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
     //si l'utilisateur srvol sur le donjon
-    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0) {
+    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0&&arme==0) {
 
         canvas.style.cursor = "pointer";
 
@@ -582,6 +747,40 @@ canvas.addEventListener("mousemove", function(e) {
         canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche travailler
     }
 
+//Si l'utilisateur survol le boutton fermer du magasin
+    else if (mouseX > closeShopButton.xMin && mouseX < closeShopButton.xMax && mouseY > closeShopButton.yMin && mouseY < closeShopButton.yMax && arme==1) {
+        canvas.style.cursor = "pointer";
+    }
+
+    //Si l'utilisateur survol le boutton du magasin d'arc
+        else if (mouseX > arcShopButton.xMin && mouseX < arcShopButton.xMax && mouseY > arcShopButton.yMin && mouseY < arcShopButton.yMax && arme==1) {
+            canvas.style.cursor = "pointer";
+        }
+
+//Si l'utilisateur survol le boutton du magasin d'armure
+    else if (mouseX > armureShopButton.xMin && mouseX < armureShopButton.xMax && mouseY > armureShopButton.yMin && mouseY < armureShopButton.yMax && arme==1) {
+        canvas.style.cursor = "pointer";
+    }
+    //Si l'utilisateur survol le boutton du magasin de potions
+    else if (mouseX > potionShopButton.xMin && mouseX < potionShopButton.xMax && mouseY > potionShopButton.yMin && mouseY < potionShopButton.yMax && arme==1) {
+        canvas.style.cursor = "pointer";
+    }
+
+    //Si l'utilisateur survol le boutton de la premiere option du shop
+      else if (mouseX > firstShopButton.xMin && mouseX < firstShopButton.xMax && mouseY > firstShopButton.yMin && mouseY < firstShopButton.yMax&& arme==1) {
+          canvas.style.cursor = "pointer";
+      }
+
+
+    //Si l'utilisateur survol le boutton de la deuxiéme option du shop
+    else if (mouseX > secondShopButton.xMin && mouseX < secondShopButton.xMax && mouseY > secondShopButton.yMin && mouseY < secondShopButton.yMax&& arme==1) {
+        canvas.style.cursor = "pointer";
+    }
+
+      //Si l'utilisateur survol le boutton de la troisiéme option du shop
+      else if (mouseX > thirdShopButton.xMin && mouseX < thirdShopButton.xMax && mouseY > thirdShopButton.yMin && mouseY < thirdShopButton.yMax&& arme==1) {
+          canvas.style.cursor = "pointer";
+      }
     else {
 
         canvas.style.cursor = "default";
