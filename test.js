@@ -288,16 +288,16 @@ const m1 = {
 
     x: 400, //position horizontale
     y: 250, //position verticale
-    width: 32, //la largeur du caractére
+    width:  32, //la largeur du caractére
     height: 48, //la hauteur du caractere
     frameX: 0, //coordonnees horizontal du cadre
     frameY: 0, //coordonnees vertical du cadre
     speed: 4,
     moving: false,
-    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
-    mineurActif:0,
-    job:0,
-    dispo:0
+    hideMineur: 0, //cette variable fait disparaitre le mineur dans la mine
+    mineurActif: 0,
+    job: 0,
+    dispo: 0
 
 
 }
@@ -311,9 +311,10 @@ const m2 = {
     frameY: 0, //coordonnees vertical du cadre
     speed: 6,
     moving: false,
-    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
-    mineurActif:0,
-    job:0,
+    hideMineur: 0, //cette variable fait disparaitre le mineur dans la mine
+    mineurActif: 0,
+    job: 0,
+    dispo: 0
 }
 const m3 = {
 
@@ -325,9 +326,10 @@ const m3 = {
     frameY: 0, //coordonnees vertical du cadre
     speed: 6,
     moving: false,
-    hideMineur:0,//cette variable fait disparaitre le mineur dans la mine
-    mineurActif:0,
-    job:0,
+    hideMineur: 0, //cette variable fait disparaitre le mineur dans la mine
+    mineurActif: 0,
+    job: 0,
+    dispo: 0
 
 }
 ////////////////////////////////////Les attributs des personnages////////////////////////////////////////
@@ -510,7 +512,7 @@ canvas.addEventListener("click", function(e) {
         if (player.solde > 20 || player.solde == 20) {
             player.solde -= 20;
             gui = 0;
-            mineur2 += 1
+            m2.dispo += 1
         } else {
             alert("Vous n'avez pas assez d'or");
         }
@@ -521,13 +523,71 @@ canvas.addEventListener("click", function(e) {
         if (player.solde > 30 || player.solde == 30) {
             player.solde -= 30;
             gui = 0;
-            mineur3 += 1
+            m3.dispo += 1
         } else {
             alert("Vous n'avez pas assez d'or");
         }
 
     }
-    if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0) {
+     else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m2.dispo >= 1 && gui == 0) {
+
+        var inter2 = setInterval(function() {
+
+            if (m2.y > 88) {
+
+                m2.y -= m2.speed;
+                m2.frameY = 3;
+                m2.moving = true;
+
+            }
+            if (m2.x > 240) {
+
+                m2.x -= m2.speed;
+                m2.frameY = 1;
+                m2.moving = true;
+
+            } else if (m2.x < 240 + m2.speed && m2.y < 88 + m2.speed) {
+
+                m2.moving = false;
+                clearInterval(inter2);
+                m2.hideMineur = 1;
+                m2.mineurActif = 1;
+                setTimeout(function() {
+                    m2.mineurActif = 0;
+                }, 5000);
+            }
+
+        }, 30);
+    } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m3.dispo >= 1 && gui == 0) {
+
+        var inter3 = setInterval(function() {
+
+            if (m3.y > 88) {
+
+                m3.y -= m3.speed;
+                m3.frameY = 3;
+                m3.moving = true;
+
+            }
+            if (m3.x > 240) {
+
+                m3.x -= m3.speed;
+                m3.frameY = 1;
+                m3.moving = true;
+
+            } else if (m3.x < 240 + m3.speed && m3.y < 88 + m3.speed) {
+
+                m3.moving = false;
+                clearInterval(inter3);
+                m3.hideMineur = 1;
+                m3.mineurActif = 1;
+                setTimeout(function() {
+                    m3.mineurActif = 0;
+                }, 5000);
+            }
+        }, 30);
+    }
+    else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0) {
 
         var inter1 = setInterval(function() {
 
@@ -548,17 +608,14 @@ canvas.addEventListener("click", function(e) {
 
                 m1.moving = false;
                 clearInterval(inter);
-                //shopping = 1;
-                m1.hideMineur=1;
-                m1.mineurActif=1;
+                m1.hideMineur = 1;
+                m1.mineurActif = 1;
                 setTimeout(function() {
-                  m1.mineurActif=0;
+                    m1.mineurActif = 0;
                 }, 5000);
             }
 
         }, 30);
-        //alert("khdaama");
-
     }
 
 
@@ -652,7 +709,7 @@ canvas.addEventListener("click", function(e) {
                 arme=0;
                 player.pointVie+=75;
               }
-              
+
             }
 
 
@@ -743,7 +800,7 @@ canvas.addEventListener("mousemove", function(e) {
         //si l'utilisateur survol sur la touche mineur 3
     } else if (mouseX > popupGuildeMineur3.xMin && mouseX < popupGuildeMineur3.xMax && mouseY > popupGuildeMineur3.yMin && mouseY < popupGuildeMineur3.yMax && gui == 1) {
         canvas.style.cursor = "pointer";
-    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && ((m1.dispo >= 1 && m1.hideMineur==0)|| mineur2 >= 1 || mineur3 >= 1)) {
+    } else if (mouseX > travailler.xMin && mouseX < travailler.xMax && mouseY > travailler.yMin && mouseY < travailler.yMax && ((m1.dispo >= 1 && m1.hideMineur == 0) || (m2.dispo >= 1 && m2.hideMineur == 0) || (m3.dispo >= 1 && m3.hideMineur == 0))) {
         canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche travailler
     }
 
@@ -835,32 +892,30 @@ function animate() {
     if (gui == 1) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (m1.dispo >= 1 && gui == 0 &&m1.hideMineur==0) {
+    if (m1.dispo >= 1 && gui == 0 && m1.hideMineur == 0) {
         ctx.drawImage(travail, -2, -4, 220, 75);
-      //  ctx.drawImage(stopt, 0, 34, 215, 65);
-
-          for (i = 0; i < m1.dispo; i++) {
-              drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
-          }
-
-
+        for (i = 0; i < m1.dispo; i++) {
+            drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
+        }
     }
-    if (m1.hideMineur==1) {
-      ctx.drawImage(piocheMineur,127,10,100,60);
-    }
-    if (mineur2 == 1 && gui == 0) {
-      ctx.drawImage(travail, -2, -4, 220, 75);
-
-        drawSprite(mineur2sprite, m2.width * m2.frameX, m2.height * m2.frameY, m2.width, m2.height, m2.x, m2.y, m2.width, m2.height)
-        mineur2dispo = 1;
-
-    }
-    if (mineur3 == 1 && gui == 0) {
-        drawSprite(mineur3sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
-        mineur2dispo = 1;
+    if (m2.dispo >= 1 && gui == 0 && m2.hideMineur == 0) {
         ctx.drawImage(travail, -2, -4, 220, 75);
-        ctx.drawImage(stopt, 0, 34, 215, 65);
+        for (i = 0; i < m2.dispo; i++) {
+            drawSprite(mineur2sprite, m2.width * m2.frameX, m2.height * m2.frameY, m2.width, m2.height, m2.x, m2.y, m2.width, m2.height)
+        }
     }
+    if (m3.dispo >= 1 && gui == 0 && m3.hideMineur == 0) {
+        ctx.drawImage(travail, -2, -4, 220, 75);
+        for (i = 0; i < m3.dispo; i++) {
+            drawSprite(mineur3sprite, m3.width * m3.frameX, m3.height * m3.frameY, m3.width, m3.height, m3.x, m3.y, m3.width, m3.height)
+        }
+    }
+
+
+    if (m1.hideMineur == 1 || m2.hideMineur == 1 || m3.hideMineur == 1) {
+        ctx.drawImage(piocheMineur, 127, 10, 100, 60);
+    }
+
 
     //dessine le boutton du shop quand il a le droit
 
@@ -870,34 +925,49 @@ function animate() {
 
     //Affiche la popUp
 
-    if (bienvenue == 1) {
+    if (bienvenue == 3) {
         ctx.drawImage(popup, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
 
 
     //movePlayer();
     handlePlayerFrame();
+    handleM1Frame();
+    handleM2Frame();
+    handleM3Frame();
     requestAnimationFrame(animate);
     ctx.font = "30px Arial";
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
-    ctx.fillText("Niveau :" + player.niveau, 80, 482);
+    ctx.fillText("Niveau :" + player.niveau, 60, 482);
 
 
 
 }
 animate();
 
-
-
-function miner(){
+function miner() {
     clearTimeout(timer);
-    if (m1.mineurActif==1){
-    m1.job++;
-    player.solde += 1;
-}
+    if (m1.mineurActif == 1) {
+        m1.job++;
+        player.solde += 1;
+    }
+    if (m2.mineurActif == 1) {
+        m2.job++;
+        player.solde += 2;
+    }
+    if (m3.mineurActif == 1) {
+        m3.job++;
+        player.solde += 3;
+    }
 
-    if(m1.job < 30){ timer = setTimeout(miner,2000); }
+    if (m1.job < 30) {
+        timer = setTimeout(miner, 2000);
+    } else if (m2.job < 30) {
+        timer = setTimeout(miner, 1000);
+    } else if (m3.job < 30) {
+        timer = setTimeout(miner, 500);
+    }
 }
 miner();
 //////////////////////////// Fin Dessin ////////////////////////////
@@ -947,6 +1017,31 @@ function handlePlayerFrame() {
         player.frameX = 0;
     }
 }
+function handleM1Frame() {
+    if (m1.frameX < 3 && m1.moving) {
+        m1.frameX++;
+    } else {
+        m1.frameX = 0;
+    }
+}
+function handleM2Frame() {
+    if (m2.frameX < 3 && m2.moving) {
+        m2.frameX++;
+    } else {
+        m2.frameX = 0;
+    }
+}
+function handleM3Frame() {
+    if (m3.frameX < 3 && m3.moving) {
+        m3.frameX++;
+    } else {
+        m3.frameX = 0;
+    }
+}
+
+
+
+
 
 
 ////------------------------Clavier et move player ------------------------//
