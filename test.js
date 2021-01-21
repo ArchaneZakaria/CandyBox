@@ -19,6 +19,14 @@ var timer;
 var arcMagasin=1;
 var armureMagasin=0;
 var potionMagasin=0;
+var arrowShot=0;
+var donjonPopup=0;
+var etage1=0;
+var etage0=1;
+var music1 = document.getElementById("music1");
+var bgm = document.getElementById("bgm");
+
+
 
 
 
@@ -90,6 +98,19 @@ magasinPotion.src = "images/shoppotion.png";
 
 const piocheMineur = new Image();
 piocheMineur.src = "images/pioche.png";
+
+const fleche = new Image();
+fleche.src = "images/arrow.png";
+
+const monstreSprite = new Image();
+monstreSprite.src = "images/monstre1.png";
+
+const popEtagechoix = new Image();
+popEtagechoix.src = "images/Etage.png";
+
+const donjon1etage = new Image();
+donjon1etage.src = "images/etage1.jpg";
+
 
 /////////////:-------------------FIN Les éléments situées dans la carte ( SOURCE IMAGE )------------------/////////:
 
@@ -233,6 +254,12 @@ const thirdShopButton = { //Positionnement du troisiéme button du magasin
     yMin:107,
     yMax: 126
 }
+const popEtage1 = { //Positionnement du troisiéme button du magasin
+    xMin: -64,
+    xMax: 64,
+    yMin:-108,
+    yMax: -33
+}
 
 
 //////////////////////////// FinPositionnement des éléments situées dans la carte pour//////////////////////////////////
@@ -253,7 +280,7 @@ document.addEventListener("click", printMousePos);
 var bienvenue = 0; //Ce champs sera initialement égale a 0
 setTimeout(function() {
     bienvenue = 1;
-}, 2200); //Apres 2s et 200ms sera égale a 1 pour qu'il apparait dans la fonction animate()
+}, 20000); //Apres 2s et 200ms sera égale a 1 pour qu'il apparait dans la fonction animate()
 
 
 
@@ -271,8 +298,8 @@ const player = {
     y: 250, //position verticale
     width: 32, //la largeur du caractére
     height: 48, //la hauteur du caractere
-    frameX: 0, //coordonnees horizontal du cadre
-    frameY: 0, //coordonnees vertical du cadre
+    frameX: 3, //coordonnees horizontal du cadre
+    frameY: 3, //coordonnees vertical du cadre
     speed: 6,
     moving: false,
     solde: 0,
@@ -332,6 +359,33 @@ const m3 = {
     dispo: 0
 
 }
+const Arrow = {
+
+    x: 392, //position horizontale
+    y: 260, //position verticale
+    width: 32, //la largeur du caractére
+    height: 48, //la hauteur du caractere
+    frameX: 3, //coordonnees horizontal du cadre
+    frameY: 3, //coordonnees vertical du cadre
+    speed: 10,
+    moving: false,
+
+}
+const monstre = {
+
+    x: 676, //position horizontale
+    y: 364, //position verticale
+    width: 32, //la largeur du caractére
+    height: 48, //la hauteur du caractere
+    frameX: 0, //coordonnees horizontal du cadre
+    frameY: 0, //coordonnees vertical du cadre
+    speed: 0.25,
+    moving: false,
+    niveau: 1,
+    attack:0,
+    defense:0,
+    pointVie:100
+}
 ////////////////////////////////////Les attributs des personnages////////////////////////////////////////
 
 
@@ -342,13 +396,17 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH) {
 
 
 //---------------------------------Music---------------------------------//
-var bgm = document.getElementById("bgm");
+if (etage1==0){
 bgm.play();
-
+}
+if (etage1==1 && etage0==0){
+    bgm.currenttime=0;
+    bgm=music1;
+}
 
 var sonClic = document.getElementById("sonclic");
 var sonTest = true;
-if (gameover == 0) {
+if (gameover == 0 && etage0 == 1) {
     canvas.onclick = function() {
         if (sonTest) {
             sonClic.pause();
@@ -379,8 +437,34 @@ canvas.addEventListener("click", function(e) {
 //alert(clickX);
 //alert(clickY);
     //si l'utilisateur clique sur la mine d'or
+    if (clickX > monstre.x-400 && clickX < monstre.x-368 && clickY > monstre.y-250 && clickY < monstre.y-202) {
+        arrowShot=1;
+        var inter = setInterval(function() {
 
-    if (clickX > mineDor.xMin && clickX < mineDor.xMax && clickY > mineDor.yMin && clickY < mineDor.yMax && bienvenue == 0 && player.cadeauObtenu == false) {
+
+            if (Arrow.y > monstre.y) {
+                Arrow.y -= Arrow.speed;
+                Arrow.moving = true;
+
+            }
+            if (Arrow.x < monstre.x) {
+
+                Arrow.x += Arrow.speed;
+                Arrow.moving = true;
+            }
+            else {
+                Arrow.x=player.x-30;
+                Arrow.speed=10;
+                arrowShot=0;
+                Arrow.moving==false;
+                clearInterval(inter);
+            }
+
+            
+
+        }, 30);
+    }
+    if (clickX > mineDor.xMin && clickX < mineDor.xMax && clickY > mineDor.yMin && clickY < mineDor.yMax && bienvenue == 0 && player.cadeauObtenu == false && etage0 == 1) {
 
         var inter = setInterval(function() {
 
@@ -405,11 +489,9 @@ canvas.addEventListener("click", function(e) {
             }
 
         }, 30);
-
     }
-
     //si l'utilisateur clique sur le boutton de shop
-    if (clickX > cadeauButton.xMin && clickX < cadeauButton.xMax && clickY > cadeauButton.yMin && clickY < cadeauButton.yMax && shopping == 1) {
+    if (clickX > cadeauButton.xMin && clickX < cadeauButton.xMax && clickY > cadeauButton.yMin && clickY < cadeauButton.yMax && shopping == 1 && etage0 == 1) {
 
         shop.src = "images/50.png";
         setTimeout(function() {
@@ -421,7 +503,7 @@ canvas.addEventListener("click", function(e) {
     }
     //SI l'utilisateur clique sur la guilde
 
-    if (clickX > Guilde.xMin && clickX < Guilde.xMax && clickY > Guilde.yMin && clickY < Guilde.yMax) {
+    if (clickX > Guilde.xMin && clickX < Guilde.xMax && clickY > Guilde.yMin && clickY < Guilde.yMax && etage0 == 1) {
         var inter3 = setInterval(function() {
             if (player.y < 350) {
                 player.y += player.speed;
@@ -445,7 +527,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le boutton du popup bienvenue
-    if (clickX > popupButton.xMin && clickX < popupButton.xMax && clickY > popupButton.yMin && clickY < popupButton.yMax) {
+    if (clickX > popupButton.xMin && clickX < popupButton.xMax && clickY > popupButton.yMin && clickY < popupButton.yMax && etage0 == 1) {
 
         bienvenue = 0;
     }
@@ -454,10 +536,8 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le donjon
-    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && player.cadeauObtenu == true && gui == 0&&arme==0) {
-
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1) {
         var inter1 = setInterval(function() {
-
             if (player.x < 490) {
                 player.x += player.speed;
                 player.frameY = 2;
@@ -471,13 +551,12 @@ canvas.addEventListener("click", function(e) {
                 player.moving = true;
 
             } else if (player.x > 490 - player.speed && player.y > 130 - player.speed) {
-
                 player.moving = false;
-                clearInterval(inter);
-                //shopping=1;
+                donjonPopup=1;
+                clearInterval(inter1);
+        
             }
         }, 30);
-        //alert("khdaama");
 
     }
 
@@ -486,10 +565,10 @@ canvas.addEventListener("click", function(e) {
     //si l'utilisateur decide de fermer la popup des mineurs
 
 
-    if (clickX > popupGuildeCloseButton.xMin && clickX < popupGuildeCloseButton.xMax && clickY > popupGuildeCloseButton.yMin && clickY < popupGuildeCloseButton.yMax && gui == 1) {
+    if (clickX > popupGuildeCloseButton.xMin && clickX < popupGuildeCloseButton.xMax && clickY > popupGuildeCloseButton.yMin && clickY < popupGuildeCloseButton.yMax && gui == 1 && etage0 == 1) {
         gui = 0;
     }
-    if (clickX > magasinButton.xMin && clickX < magasinButton.xMax && clickY > magasinButton.yMin && clickY < magasinButton.yMax) {
+    if (clickX > magasinButton.xMin && clickX < magasinButton.xMax && clickY > magasinButton.yMin && clickY < magasinButton.yMax && etage0 == 1) {
 
         arme = 1;
     }
@@ -497,7 +576,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur decide d'acheter le premier mineur
-    if (clickX > popupGuildeMineur1.xMin && clickX < popupGuildeMineur1.xMax && clickY > popupGuildeMineur1.yMin && clickY < popupGuildeMineur1.yMax && gui == 1) {
+    if (clickX > popupGuildeMineur1.xMin && clickX < popupGuildeMineur1.xMax && clickY > popupGuildeMineur1.yMin && clickY < popupGuildeMineur1.yMax && gui == 1 && etage0 == 1) {
         if (player.solde > 10 || player.solde == 10) {
             player.solde -= 10;
             gui = 0;
@@ -508,7 +587,7 @@ canvas.addEventListener("click", function(e) {
 
     }
     //si l'utilisateur decide d'acheter le deuxieme mineur
-    if (clickX > popupGuildeMineur2.xMin && clickX < popupGuildeMineur2.xMax && clickY > popupGuildeMineur2.yMin && clickY < popupGuildeMineur2.yMax && gui == 1) {
+    if (clickX > popupGuildeMineur2.xMin && clickX < popupGuildeMineur2.xMax && clickY > popupGuildeMineur2.yMin && clickY < popupGuildeMineur2.yMax && gui == 1 && etage0 == 1) {
         if (player.solde > 20 || player.solde == 20) {
             player.solde -= 20;
             gui = 0;
@@ -519,7 +598,7 @@ canvas.addEventListener("click", function(e) {
 
     }
     //si l'utilisateur decide d'acheter le troisieme mineur
-    if (clickX > popupGuildeMineur3.xMin && clickX < popupGuildeMineur3.xMax && clickY > popupGuildeMineur3.yMin && clickY < popupGuildeMineur3.yMax && gui == 1) {
+    if (clickX > popupGuildeMineur3.xMin && clickX < popupGuildeMineur3.xMax && clickY > popupGuildeMineur3.yMin && clickY < popupGuildeMineur3.yMax && gui == 1 && etage0 == 1) {
         if (player.solde > 30 || player.solde == 30) {
             player.solde -= 30;
             gui = 0;
@@ -529,7 +608,7 @@ canvas.addEventListener("click", function(e) {
         }
 
     }
-     else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m2.dispo >= 1 && gui == 0) {
+     else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m2.dispo >= 1 && gui == 0 && etage0 == 1) {
 
         var inter2 = setInterval(function() {
 
@@ -558,7 +637,7 @@ canvas.addEventListener("click", function(e) {
             }
 
         }, 30);
-    } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m3.dispo >= 1 && gui == 0) {
+    } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m3.dispo >= 1 && gui == 0 && etage0 == 1) {
 
         var inter3 = setInterval(function() {
 
@@ -587,7 +666,7 @@ canvas.addEventListener("click", function(e) {
             }
         }, 30);
     }
-    else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0) {
+    else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0 && etage0 == 1) {
 
         var inter1 = setInterval(function() {
 
@@ -620,12 +699,13 @@ canvas.addEventListener("click", function(e) {
 
 
 
+
                                             //si la popUp du magasin est afficher
     if(arme==1){
 
 
       //si l'utilisateur decide de fermer le magasin
-          if (clickX > closeShopButton.xMin && clickX < closeShopButton.xMax && clickY > closeShopButton.yMin && clickY < closeShopButton.yMax && arme == 1) {
+          if (clickX > closeShopButton.xMin && clickX < closeShopButton.xMax && clickY > closeShopButton.yMin && clickY < closeShopButton.yMax && arme == 1 ) {
               arme = 0;
           }
 
@@ -714,6 +794,13 @@ canvas.addEventListener("click", function(e) {
 
 
     }
+    if (clickX > popEtage1.xMin && clickX < popEtage1.xMax && clickY > popEtage1.yMin && clickY < popEtage1.yMax) {
+
+        etage1 = 1;
+        etage0 = 0;
+    }
+
+
 
 
 
@@ -738,7 +825,7 @@ canvas.addEventListener("mousemove", function(e) {
 
     //si l'utilisateur survol la mine d'or
 
-    if (mouseX > mineDor.xMin && mouseX < mineDor.xMax && mouseY > mineDor.yMin && mouseY < mineDor.yMax) {
+    if (mouseX > mineDor.xMin && mouseX < mineDor.xMax && mouseY > mineDor.yMin && mouseY < mineDor.yMax && etage0 == 1) {
 
 
         if (shopping == 0 && player.cadeauObtenu == false) {
@@ -753,9 +840,12 @@ canvas.addEventListener("mousemove", function(e) {
         }
 
     }
-
     //si l'utilisateur survol le boutton du shop
     else if (mouseX > cadeauButton.xMin && mouseX < cadeauButton.xMax && mouseY > cadeauButton.yMin && mouseY < cadeauButton.yMax && shopping == 1) {
+
+        canvas.style.cursor = "pointer";
+    }
+    else if (mouseX > monstre.x-400 && mouseX < monstre.x -368 && mouseY > monstre.y-250 && mouseY < monstre.y) {
 
         canvas.style.cursor = "pointer";
     }
@@ -780,7 +870,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
 
-    } else if (mouseX > magasinButton.xMin && mouseX < magasinButton.xMax && mouseY > magasinButton.yMin && mouseY < magasinButton.yMax) {
+    } else if (mouseX > magasinButton.xMin && mouseX < magasinButton.xMax && mouseY > magasinButton.yMin && mouseY < magasinButton.yMax && etage0 == 1) {
         canvas.style.cursor = "pointer";
     }
 
@@ -860,51 +950,64 @@ function animate() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    if (etage1==1){
+        ctx.drawImage(donjon1etage, 0, 0, canvas.width, canvas.height);
+    }
+    if (etage0==1){
     ctx.drawImage(mineDorImage, 127, 50, 120, 120);
     ctx.drawImage(donjon, 500, -10, 256, 256);
+    }
+    if (etage0==1 || etage1==1){
     ctx.drawImage(niveau, -10, 435, 256, 75);
     ctx.drawImage(or, 550, 435, 256, 75);
+    }
+    if (arrowShot==1 && etage1 == 1){
+        drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, player+30, player.y-10, Arrow.width, Arrow.height);
+    }
+    if (etage0==1){
     ctx.drawImage(buttonmagasin, 622, 350, 256, 125);
-    if (condition == 1) {
+    }
+    if (condition == 1 && etage0 == 1) {
         ctx.drawImage(guilde, 110, 180, 256, 256);
     }
     if (pop == 0) // hadi drtha bach nkhbi perso mli ykhrj chi pop walakin ghir 7ydha
     {
         drawSprite(playerSprite, player.width * player.frameX, player.height * player.frameY, player.width, player.height, player.x, player.y, player.width, player.height);
     }
-    if (arme == 1) {
+    if (arme == 1 && etage0 == 1) {
         ctx.drawImage(magasinArme, canvas.width / 2 - 175, canvas.height / 2 - 175, 350, 350);
     }
-    if (potion == 1) {
+    if (potion == 1 && etage0 == 1) {
         ctx.drawImage(magasinPotion, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
         arme = 0;
         armure = 0;
     }
-    if (armure == 1) {
+    if (armure == 1 && etage0 == 1) {
         ctx.drawImage(magasinArmure, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
         potion = 0;
         arme = 0;
     }
 
+
     //Dessine le sprite "personnage"
 
 
-    if (gui == 1) {
+    if (gui == 1 && etage0 == 1 ) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (m1.dispo >= 1 && gui == 0 && m1.hideMineur == 0) {
+    if (m1.dispo >= 1 && gui == 0 && m1.hideMineur == 0 && etage0 == 1 ) {
         ctx.drawImage(travail, -2, -4, 220, 75);
         for (i = 0; i < m1.dispo; i++) {
             drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
         }
     }
-    if (m2.dispo >= 1 && gui == 0 && m2.hideMineur == 0) {
+    if (m2.dispo >= 1 && gui == 0 && m2.hideMineur == 0 && etage0 == 1) {
         ctx.drawImage(travail, -2, -4, 220, 75);
         for (i = 0; i < m2.dispo; i++) {
             drawSprite(mineur2sprite, m2.width * m2.frameX, m2.height * m2.frameY, m2.width, m2.height, m2.x, m2.y, m2.width, m2.height)
         }
     }
-    if (m3.dispo >= 1 && gui == 0 && m3.hideMineur == 0) {
+    if (m3.dispo >= 1 && gui == 0 && m3.hideMineur == 0 && etage0 == 1) {
         ctx.drawImage(travail, -2, -4, 220, 75);
         for (i = 0; i < m3.dispo; i++) {
             drawSprite(mineur3sprite, m3.width * m3.frameX, m3.height * m3.frameY, m3.width, m3.height, m3.x, m3.y, m3.width, m3.height)
@@ -912,36 +1015,56 @@ function animate() {
     }
 
 
-    if (m1.hideMineur == 1 || m2.hideMineur == 1 || m3.hideMineur == 1) {
+    if (m1.hideMineur == 1 || m2.hideMineur == 1 || m3.hideMineur == 1 && etage0 == 1) {
         ctx.drawImage(piocheMineur, 127, 10, 100, 60);
     }
 
 
     //dessine le boutton du shop quand il a le droit
 
-    if (shopping == 1 && player.cadeauObtenu === false) {
+    if (shopping == 1 && player.cadeauObtenu === false && etage0 == 1) {
         ctx.drawImage(shop, 127, 10, 100, 60);
     }
 
     //Affiche la popUp
 
-    if (bienvenue == 3) {
+    if (bienvenue == 1 && etage0 == 1) {
         ctx.drawImage(popup, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
+    if (donjonPopup==1 && etage1==0)
+    {
+        ctx.drawImage(popEtagechoix, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
+        etage0==0;
+    }
+    if (etage1==1){
+        donjonPopup = 0 ; 
+    }
+    if (etage1){
+    drawSprite(monstreSprite, monstre.width * monstre.frameX, monstre.height * monstre.frameY, monstre.width, monstre.height, monstre.x, monstre.y, monstre.width, monstre.height);
+}
 
 
-    //movePlayer();
+    
+
+
+if (etage1)
+{
+    movePlayer();
+}
     handlePlayerFrame();
     handleM1Frame();
     handleM2Frame();
     handleM3Frame();
+    handleArrowFrame();
+    handleMonsterFrame();
+    if (etage1){
+        monstreMouvement();
+    }
     requestAnimationFrame(animate);
     ctx.font = "30px Arial";
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
     ctx.fillText("Niveau :" + player.niveau, 60, 482);
-
-
 
 }
 animate();
@@ -1038,6 +1161,52 @@ function handleM3Frame() {
         m3.frameX = 0;
     }
 }
+function handleArrowFrame() {
+    if (Arrow.frameX < 3 && Arrow.moving) {
+        Arrow.frameX++;
+    } else {
+        Arrow.frameX = 0;
+    }
+}
+function handleMonsterFrame() {
+    if (monstre.frameX < 3 && monstre.moving) {
+        monstre.frameX++;
+    } else {
+        monstre.frameX = 0;
+    }
+}
+function monstreMouvement(){
+    clearTimeout(timer);
+    if (etage1) {
+        setTimeout(monstreMouvement,2000);
+    }
+    var interx = setInterval(function() {
+    if (monstre.x>player.x){
+        monstre.moving=true;
+        monstre.x-=monstre.speed;
+        }
+    else if ( monstre.x<player.x){
+        monstre.moving=true;
+        monstre.x+=monstre.speed;
+    }
+    else if (monstre.y>player.y){
+        monstre.moving=true;
+        monstre.y-=monstre.speed;     
+    }
+    else if (monstre.y<player.y){
+        monstre.moving=true;
+        monstre.y+=monstre.speed;     
+    }
+    else {
+        monstre.moving=false;
+        clearInterval(interx);
+
+
+    }
+    
+}, 30);
+
+};
 
 
 
