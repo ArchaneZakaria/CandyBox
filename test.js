@@ -1,8 +1,12 @@
 //Proprietes du canvas
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+//const canvas2 = document.getElementById("canvas2");
+//const ctx2 = canvas2.getContext("2d");
 canvas.width = 800;
 canvas.height = 500;
+//canvas2.width = 800;
+//canvas2.height = 500;
 var gameover = 0;
 var condition = 0;
 var gui = 0;
@@ -16,16 +20,21 @@ var armure = 0;
 var potion = 0;
 var shopping = 0;
 var timer;
-var arcMagasin=1;
-var armureMagasin=0;
-var potionMagasin=0;
-var arrowShot=0;
-var donjonPopup=0;
-var etage1=0;
-var etage0=1;
+var arcMagasin = 1;
+var armureMagasin = 0;
+var potionMagasin = 0;
+var arrowShot = 0;
+var donjonPopup = 0;
+var etage1 = 0;
+var etage0 = 1;
 var music1 = document.getElementById("music1");
 var bgm = document.getElementById("bgm");
+var angle;
+var takePosition = 1;
+var playerCurrentX;
+var playerCurrentY;
 
+/// Angle de rotation de l'arc ///
 
 
 
@@ -104,6 +113,8 @@ fleche.src = "images/arrow.png";
 
 const monstreSprite = new Image();
 monstreSprite.src = "images/monstre1.png";
+const monstre2Sprite = new Image();
+monstre2Sprite.src = "images/monstre2.png";
 
 const popEtagechoix = new Image();
 popEtagechoix.src = "images/Etage.png";
@@ -214,7 +225,7 @@ const closeShopButton = { //Positionnement du boutton CLOSE du magasin
 const arcShopButton = { //Positionnement du boutton arc du magasin
     xMin: -109,
     xMax: -68,
-    yMin:-143 ,
+    yMin: -143,
     yMax: -85
 }
 
@@ -222,7 +233,7 @@ const arcShopButton = { //Positionnement du boutton arc du magasin
 const armureShopButton = { //Positionnement du boutton armure du magasin
     xMin: -24,
     xMax: 18,
-    yMin:-143 ,
+    yMin: -143,
     yMax: -85
 }
 
@@ -230,34 +241,34 @@ const armureShopButton = { //Positionnement du boutton armure du magasin
 const potionShopButton = { //Positionnement du boutton potion du magasin
     xMin: 66,
     xMax: 106,
-    yMin:-143 ,
+    yMin: -143,
     yMax: -85
 }
 
 const firstShopButton = { //Positionnement du premier button du magasin
     xMin: 64,
     xMax: 104,
-    yMin:-44 ,
+    yMin: -44,
     yMax: -27
 }
 
 const secondShopButton = { //Positionnement du deuxieme button du magasin
     xMin: 64,
     xMax: 104,
-    yMin:29,
+    yMin: 29,
     yMax: 51
 }
 
 const thirdShopButton = { //Positionnement du troisiéme button du magasin
     xMin: 64,
     xMax: 104,
-    yMin:107,
+    yMin: 107,
     yMax: 126
 }
 const popEtage1 = { //Positionnement du troisiéme button du magasin
     xMin: -64,
     xMax: 64,
-    yMin:-108,
+    yMin: -108,
     yMax: -33
 }
 
@@ -305,9 +316,9 @@ const player = {
     solde: 0,
     cadeauObtenu: false,
     niveau: 1,
-    attack:0,
-    defense:0,
-    pointVie:100
+    attack: 0,
+    defense: 0,
+    pointVie: 100
 
 
 }
@@ -315,7 +326,7 @@ const m1 = {
 
     x: 400, //position horizontale
     y: 250, //position verticale
-    width:  32, //la largeur du caractére
+    width: 32, //la largeur du caractére
     height: 48, //la hauteur du caractere
     frameX: 0, //coordonnees horizontal du cadre
     frameY: 0, //coordonnees vertical du cadre
@@ -359,32 +370,47 @@ const m3 = {
     dispo: 0
 
 }
-const Arrow = {
-
-    x: 392, //position horizontale
-    y: 260, //position verticale
-    width: 32, //la largeur du caractére
-    height: 48, //la hauteur du caractere
-    frameX: 3, //coordonnees horizontal du cadre
-    frameY: 3, //coordonnees vertical du cadre
-    speed: 10,
-    moving: false,
-
-}
 const monstre = {
 
     x: 676, //position horizontale
     y: 364, //position verticale
     width: 32, //la largeur du caractére
     height: 48, //la hauteur du caractere
-    frameX: 0, //coordonnees horizontal du cadre
-    frameY: 0, //coordonnees vertical du cadre
-    speed: 0.25,
+    frameX: 3, //coordonnees horizontal du cadre
+    frameY: 3, //coordonnees vertical du cadre
+    speed: 2,
     moving: false,
     niveau: 1,
-    attack:0,
-    defense:0,
-    pointVie:100
+    attack: 0,
+    defense: 0,
+    pointVie: 100
+}
+const monstre2 = {
+
+    x: 676, //position horizontale
+    y: 50, //position verticale
+    width: 32, //la largeur du caractére
+    height: 48, //la hauteur du caractere
+    frameX: 0, //coordonnees horizontal du cadre
+    frameY: 0, //coordonnees vertical du cadre
+    speed: 3,
+    moving: false,
+    niveau: 1,
+    attack: 0,
+    defense: 0,
+    pointVie: 100
+}
+const Arrow = {
+
+    x: 476, //position horizontale
+    y: 364, //position verticale
+    width: 32, //la largeur du caractére
+    height: 48, //la hauteur du caractere
+    frameX: 0, //coordonnees horizontal du cadre
+    frameY: 0, //coordonnees vertical du cadre
+    speed: 6,
+    moving: false,
+
 }
 ////////////////////////////////////Les attributs des personnages////////////////////////////////////////
 
@@ -396,12 +422,12 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH) {
 
 
 //---------------------------------Music---------------------------------//
-if (etage1==0){
-bgm.play();
+if (etage1 == 0) {
+    bgm.play();
 }
-if (etage1==1 && etage0==0){
-    bgm.currenttime=0;
-    bgm=music1;
+if (etage1 == 1 && etage0 == 0) {
+    bgm.currenttime = 0;
+    bgm = music1;
 }
 
 var sonClic = document.getElementById("sonclic");
@@ -434,36 +460,62 @@ canvas.addEventListener("click", function(e) {
     var clickX = e.pageX - positionCanevasX;
     var clickY = e.pageY - positionCanevasY;
 
-//alert(clickX);
-//alert(clickY);
+    //alert(clickX);
+    //alert(clickY);
     //si l'utilisateur clique sur la mine d'or
-    if (clickX > monstre.x-400 && clickX < monstre.x-368 && clickY > monstre.y-250 && clickY < monstre.y-202) {
-        arrowShot=1;
+    if (clickX > monstre.x - 400 && clickX < monstre.x - 368 && clickY > monstre.y - 250 && clickY < monstre.y - 202 && monstre.pointVie>0) {
+        arrowShot = 1;
+        playerCurrentX=player.x;
+        playerCurrentY=player.y
         var inter = setInterval(function() {
-
-
             if (Arrow.y > monstre.y) {
                 Arrow.y -= Arrow.speed;
                 Arrow.moving = true;
 
             }
             if (Arrow.x < monstre.x) {
-
                 Arrow.x += Arrow.speed;
+                playerCurrentX+=Arrow.speed;
                 Arrow.moving = true;
-            }
-            else {
-                Arrow.x=player.x-30;
-                Arrow.speed=10;
-                arrowShot=0;
-                Arrow.moving==false;
+            } else {
+                Arrow.x = monstre.x - 30;
+                arrowShot = 0;
+                Arrow.moving == false;
+                Arrow.speed = 6;
                 clearInterval(inter);
             }
 
-            
+
 
         }, 30);
     }
+    if (clickX > monstre2.x - 400 && clickX < monstre2.x - 368 && clickY > monstre2.y - 250 && clickY < monstre2.y - 202 && monstre2.pointVie>0) {
+        arrowShot = 1;
+        playerCurrentX=player.x;
+        playerCurrentY=player.y
+        var inter = setInterval(function() {
+            if (Arrow.y > monstre2.y) {
+                Arrow.y -= Arrow.speed;
+                Arrow.moving = true;
+
+            }
+            if (Arrow.x < monstre2.x) {
+                Arrow.x += Arrow.speed;
+                playerCurrentX+=Arrow.speed;
+                Arrow.moving = true;
+            } else {
+                Arrow.x = monstre2.x - 30;
+                arrowShot = 0;
+                Arrow.moving == false;
+                Arrow.speed = 6;
+                clearInterval(inter);
+            }
+
+
+        }, 30);
+    }
+
+
     if (clickX > mineDor.xMin && clickX < mineDor.xMax && clickY > mineDor.yMin && clickY < mineDor.yMax && bienvenue == 0 && player.cadeauObtenu == false && etage0 == 1) {
 
         var inter = setInterval(function() {
@@ -552,9 +604,9 @@ canvas.addEventListener("click", function(e) {
 
             } else if (player.x > 490 - player.speed && player.y > 130 - player.speed) {
                 player.moving = false;
-                donjonPopup=1;
+                donjonPopup = 1;
                 clearInterval(inter1);
-        
+
             }
         }, 30);
 
@@ -607,8 +659,7 @@ canvas.addEventListener("click", function(e) {
             alert("Vous n'avez pas assez d'or");
         }
 
-    }
-     else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m2.dispo >= 1 && gui == 0 && etage0 == 1) {
+    } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m2.dispo >= 1 && gui == 0 && etage0 == 1) {
 
         var inter2 = setInterval(function() {
 
@@ -665,8 +716,7 @@ canvas.addEventListener("click", function(e) {
                 }, 5000);
             }
         }, 30);
-    }
-    else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0 && etage0 == 1) {
+    } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0 && etage0 == 1) {
 
         var inter1 = setInterval(function() {
 
@@ -700,108 +750,108 @@ canvas.addEventListener("click", function(e) {
 
 
 
-                                            //si la popUp du magasin est afficher
-    if(arme==1){
+    //si la popUp du magasin est afficher
+    if (arme == 1) {
 
 
-      //si l'utilisateur decide de fermer le magasin
-          if (clickX > closeShopButton.xMin && clickX < closeShopButton.xMax && clickY > closeShopButton.yMin && clickY < closeShopButton.yMax && arme == 1 ) {
-              arme = 0;
-          }
+        //si l'utilisateur decide de fermer le magasin
+        if (clickX > closeShopButton.xMin && clickX < closeShopButton.xMax && clickY > closeShopButton.yMin && clickY < closeShopButton.yMax && arme == 1) {
+            arme = 0;
+        }
 
-          //si l'utilisateur decide de naviguer vers le magasin d'arc
-              if (clickX > arcShopButton.xMin && clickX < arcShopButton.xMax && clickY > arcShopButton.yMin && clickY < arcShopButton.yMax ) {
-                  magasinArme.src = "images/shoparc.png";
-                  arcMagasin=1;
-                  armureMagasin=0;
-                  potionMagasin=0;
-              }
+        //si l'utilisateur decide de naviguer vers le magasin d'arc
+        if (clickX > arcShopButton.xMin && clickX < arcShopButton.xMax && clickY > arcShopButton.yMin && clickY < arcShopButton.yMax) {
+            magasinArme.src = "images/shoparc.png";
+            arcMagasin = 1;
+            armureMagasin = 0;
+            potionMagasin = 0;
+        }
 
         //si l'utilisateur decide de naviguer vers le magasin d'armure
-            if (clickX > armureShopButton.xMin && clickX < armureShopButton.xMax && clickY > armureShopButton.yMin && clickY < armureShopButton.yMax ) {
-                magasinArme.src = "images/shoparmure.png";
-                arcMagasin=0;
-                armureMagasin=1;
-                potionMagasin=0;
-            }
+        if (clickX > armureShopButton.xMin && clickX < armureShopButton.xMax && clickY > armureShopButton.yMin && clickY < armureShopButton.yMax) {
+            magasinArme.src = "images/shoparmure.png";
+            arcMagasin = 0;
+            armureMagasin = 1;
+            potionMagasin = 0;
+        }
 
 
         //si l'utilisateur decide de naviguer vers le magasin de potion
-            if (clickX > potionShopButton.xMin && clickX < potionShopButton.xMax && clickY > potionShopButton.yMin && clickY < potionShopButton.yMax ) {
-                magasinArme.src = "images/shoppotion.png";
-                arcMagasin=0;
-                armureMagasin=0;
-                potionMagasin=1;
+        if (clickX > potionShopButton.xMin && clickX < potionShopButton.xMax && clickY > potionShopButton.yMin && clickY < potionShopButton.yMax) {
+            magasinArme.src = "images/shoppotion.png";
+            arcMagasin = 0;
+            armureMagasin = 0;
+            potionMagasin = 1;
+        }
+
+        //si l'utilisateur est dans le magasin d'arc
+        if (arcMagasin == 1) {
+            if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax && (player.solde > 10 || player.solde == 10)) {
+                player.solde -= 10;
+                arme = 0;
+                player.attack += 5;
+            }
+            if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax && (player.solde > 30 || player.solde == 30)) {
+                player.solde -= 30;
+                arme = 0;
+                player.attack += 10;
+            }
+            if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax && (player.solde > 50 || player.solde == 50)) {
+                player.solde -= 50;
+                arme = 0;
+                player.attack += 15;
+            }
+        }
+
+        //si l'utilisateur est dans le magasin d'armure
+        if (armureMagasin == 1) {
+            if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax && (player.solde > 10 || player.solde == 10)) {
+                player.solde -= 10;
+                arme = 0;
+                player.defense += 5;
+            }
+            if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax && (player.solde > 30 || player.solde == 30)) {
+                player.solde -= 30;
+                arme = 0;
+                player.defense += 10;
+            }
+            if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax && (player.solde > 50 || player.solde == 50)) {
+                player.solde -= 50;
+                arme = 0;
+                player.defense += 15;
+            }
+        }
+
+        //si l'utilisateur est dans le magasin de potion
+        if (potionMagasin == 1) {
+            if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax && (player.solde > 5 || player.solde == 5)) {
+                player.solde -= 5;
+                arme = 0;
+                player.pointVie += 25;
+            }
+            if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax && (player.solde > 15 || player.solde == 15)) {
+                player.solde -= 15;
+                arme = 0;
+                player.pointVie += 50;
+            }
+            if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax && (player.solde > 20 || player.solde == 20)) {
+                player.solde -= 20;
+                arme = 0;
+                player.pointVie += 75;
             }
 
-            //si l'utilisateur est dans le magasin d'arc
-            if(arcMagasin==1){
-                if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>10||player.solde==10)) {
-                  player.solde-=10;
-                  arme=0;
-                  player.attack+=5;
-                }
-                if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>30||player.solde==30) ) {
-                  player.solde-=30;
-                  arme=0;
-                  player.attack+=10;
-                }
-                if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>50||player.solde==50)) {
-                  player.solde-=50;
-                  arme=0;
-                  player.attack+=15;
-                }
-            }
-
-            //si l'utilisateur est dans le magasin d'armure
-            if(armureMagasin==1){
-              if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>10||player.solde==10)) {
-                player.solde-=10;
-                arme=0;
-                player.defense+=5;
-              }
-              if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>30||player.solde==30) ) {
-                player.solde-=30;
-                arme=0;
-                player.defense+=10;
-              }
-              if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>50||player.solde==50)) {
-                player.solde-=50;
-                arme=0;
-                player.defense+=15;
-              }
-            }
-
-            //si l'utilisateur est dans le magasin de potion
-            if(potionMagasin==1){
-              if (clickX > firstShopButton.xMin && clickX < firstShopButton.xMax && clickY > firstShopButton.yMin && clickY < firstShopButton.yMax &&(player.solde>5||player.solde==5)) {
-                player.solde-=5;
-                arme=0;
-                player.pointVie+=25;
-              }
-              if (clickX > secondShopButton.xMin && clickX < secondShopButton.xMax && clickY > secondShopButton.yMin && clickY < secondShopButton.yMax&&(player.solde>15||player.solde==15) ) {
-                player.solde-=15;
-                arme=0;
-                player.pointVie+=50;
-              }
-              if (clickX > thirdShopButton.xMin && clickX < thirdShopButton.xMax && clickY > thirdShopButton.yMin && clickY < thirdShopButton.yMax &&(player.solde>20||player.solde==20)) {
-                player.solde-=20;
-                arme=0;
-                player.pointVie+=75;
-              }
-
-            }
+        }
 
 
     }
     if (clickX > popEtage1.xMin && clickX < popEtage1.xMax && clickY > popEtage1.yMin && clickY < popEtage1.yMax) {
+        music1.play();
+        bgm.pause();
+
 
         etage1 = 1;
         etage0 = 0;
     }
-
-
-
 
 
 
@@ -844,8 +894,7 @@ canvas.addEventListener("mousemove", function(e) {
     else if (mouseX > cadeauButton.xMin && mouseX < cadeauButton.xMax && mouseY > cadeauButton.yMin && mouseY < cadeauButton.yMax && shopping == 1) {
 
         canvas.style.cursor = "pointer";
-    }
-    else if (mouseX > monstre.x-400 && mouseX < monstre.x -368 && mouseY > monstre.y-250 && mouseY < monstre.y) {
+    } else if (mouseX > monstre.x - 400 && mouseX < monstre.x - 368 && mouseY > monstre.y - 250 && mouseY < monstre.y && monstre.pointVie > 0) {
 
         canvas.style.cursor = "pointer";
     }
@@ -860,7 +909,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
     //si l'utilisateur srvol sur le donjon
-    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0&&arme==0) {
+    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0 && arme == 0) {
 
         canvas.style.cursor = "pointer";
 
@@ -894,41 +943,40 @@ canvas.addEventListener("mousemove", function(e) {
         canvas.style.cursor = "pointer"; //si l'utilisateur survol sur la touche travailler
     }
 
-//Si l'utilisateur survol le boutton fermer du magasin
-    else if (mouseX > closeShopButton.xMin && mouseX < closeShopButton.xMax && mouseY > closeShopButton.yMin && mouseY < closeShopButton.yMax && arme==1) {
+    //Si l'utilisateur survol le boutton fermer du magasin
+    else if (mouseX > closeShopButton.xMin && mouseX < closeShopButton.xMax && mouseY > closeShopButton.yMin && mouseY < closeShopButton.yMax && arme == 1) {
         canvas.style.cursor = "pointer";
     }
 
     //Si l'utilisateur survol le boutton du magasin d'arc
-        else if (mouseX > arcShopButton.xMin && mouseX < arcShopButton.xMax && mouseY > arcShopButton.yMin && mouseY < arcShopButton.yMax && arme==1) {
-            canvas.style.cursor = "pointer";
-        }
+    else if (mouseX > arcShopButton.xMin && mouseX < arcShopButton.xMax && mouseY > arcShopButton.yMin && mouseY < arcShopButton.yMax && arme == 1) {
+        canvas.style.cursor = "pointer";
+    }
 
-//Si l'utilisateur survol le boutton du magasin d'armure
-    else if (mouseX > armureShopButton.xMin && mouseX < armureShopButton.xMax && mouseY > armureShopButton.yMin && mouseY < armureShopButton.yMax && arme==1) {
+    //Si l'utilisateur survol le boutton du magasin d'armure
+    else if (mouseX > armureShopButton.xMin && mouseX < armureShopButton.xMax && mouseY > armureShopButton.yMin && mouseY < armureShopButton.yMax && arme == 1) {
         canvas.style.cursor = "pointer";
     }
     //Si l'utilisateur survol le boutton du magasin de potions
-    else if (mouseX > potionShopButton.xMin && mouseX < potionShopButton.xMax && mouseY > potionShopButton.yMin && mouseY < potionShopButton.yMax && arme==1) {
+    else if (mouseX > potionShopButton.xMin && mouseX < potionShopButton.xMax && mouseY > potionShopButton.yMin && mouseY < potionShopButton.yMax && arme == 1) {
         canvas.style.cursor = "pointer";
     }
 
     //Si l'utilisateur survol le boutton de la premiere option du shop
-      else if (mouseX > firstShopButton.xMin && mouseX < firstShopButton.xMax && mouseY > firstShopButton.yMin && mouseY < firstShopButton.yMax&& arme==1) {
-          canvas.style.cursor = "pointer";
-      }
-
-
-    //Si l'utilisateur survol le boutton de la deuxiéme option du shop
-    else if (mouseX > secondShopButton.xMin && mouseX < secondShopButton.xMax && mouseY > secondShopButton.yMin && mouseY < secondShopButton.yMax&& arme==1) {
+    else if (mouseX > firstShopButton.xMin && mouseX < firstShopButton.xMax && mouseY > firstShopButton.yMin && mouseY < firstShopButton.yMax && arme == 1) {
         canvas.style.cursor = "pointer";
     }
 
-      //Si l'utilisateur survol le boutton de la troisiéme option du shop
-      else if (mouseX > thirdShopButton.xMin && mouseX < thirdShopButton.xMax && mouseY > thirdShopButton.yMin && mouseY < thirdShopButton.yMax&& arme==1) {
-          canvas.style.cursor = "pointer";
-      }
-    else {
+
+    //Si l'utilisateur survol le boutton de la deuxiéme option du shop
+    else if (mouseX > secondShopButton.xMin && mouseX < secondShopButton.xMax && mouseY > secondShopButton.yMin && mouseY < secondShopButton.yMax && arme == 1) {
+        canvas.style.cursor = "pointer";
+    }
+
+    //Si l'utilisateur survol le boutton de la troisiéme option du shop
+    else if (mouseX > thirdShopButton.xMin && mouseX < thirdShopButton.xMax && mouseY > thirdShopButton.yMin && mouseY < thirdShopButton.yMax && arme == 1) {
+        canvas.style.cursor = "pointer";
+    } else {
 
         canvas.style.cursor = "default";
     }
@@ -950,22 +998,20 @@ function animate() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-    if (etage1==1){
+    if (etage1 == 1) {
         ctx.drawImage(donjon1etage, 0, 0, canvas.width, canvas.height);
+
     }
-    if (etage0==1){
-    ctx.drawImage(mineDorImage, 127, 50, 120, 120);
-    ctx.drawImage(donjon, 500, -10, 256, 256);
+    if (etage0 == 1) {
+        ctx.drawImage(mineDorImage, 127, 50, 120, 120);
+        ctx.drawImage(donjon, 500, -10, 256, 256);
     }
-    if (etage0==1 || etage1==1){
-    ctx.drawImage(niveau, -10, 435, 256, 75);
-    ctx.drawImage(or, 550, 435, 256, 75);
+    if (etage0 == 1 || etage1 == 1) {
+        ctx.drawImage(niveau, -10, 435, 256, 75);
+        ctx.drawImage(or, 550, 435, 256, 75);
     }
-    if (arrowShot==1 && etage1 == 1){
-        drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, player+30, player.y-10, Arrow.width, Arrow.height);
-    }
-    if (etage0==1){
-    ctx.drawImage(buttonmagasin, 622, 350, 256, 125);
+    if (etage0 == 1) {
+        ctx.drawImage(buttonmagasin, 622, 350, 256, 125);
     }
     if (condition == 1 && etage0 == 1) {
         ctx.drawImage(guilde, 110, 180, 256, 256);
@@ -992,10 +1038,10 @@ function animate() {
     //Dessine le sprite "personnage"
 
 
-    if (gui == 1 && etage0 == 1 ) {
+    if (gui == 1 && etage0 == 1) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (m1.dispo >= 1 && gui == 0 && m1.hideMineur == 0 && etage0 == 1 ) {
+    if (m1.dispo >= 1 && gui == 0 && m1.hideMineur == 0 && etage0 == 1) {
         ctx.drawImage(travail, -2, -4, 220, 75);
         for (i = 0; i < m1.dispo; i++) {
             drawSprite(mineur1sprite, m1.width * m1.frameX, m1.height * m1.frameY, m1.width, m1.height, m1.x, m1.y, m1.width, m1.height)
@@ -1015,7 +1061,7 @@ function animate() {
     }
 
 
-    if (m1.hideMineur == 1 || m2.hideMineur == 1 || m3.hideMineur == 1 && etage0 == 1) {
+    if ((m1.hideMineur == 1 || m2.hideMineur == 1 || m3.hideMineur == 1) && etage0 == 1) {
         ctx.drawImage(piocheMineur, 127, 10, 100, 60);
     }
 
@@ -1031,41 +1077,74 @@ function animate() {
     if (bienvenue == 1 && etage0 == 1) {
         ctx.drawImage(popup, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (donjonPopup==1 && etage1==0)
-    {
+    if (donjonPopup == 1 && etage1 == 0) {
         ctx.drawImage(popEtagechoix, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
-        etage0==0;
+        etage0 == 0;
     }
-    if (etage1==1){
-        donjonPopup = 0 ; 
+    if (etage1 == 1) {
+        donjonPopup = 0;
+        player.speed = 4;
     }
-    if (etage1){
-    drawSprite(monstreSprite, monstre.width * monstre.frameX, monstre.height * monstre.frameY, monstre.width, monstre.height, monstre.x, monstre.y, monstre.width, monstre.height);
-}
+    if (etage1 && monstre.pointVie > 0) {
+        drawSprite(monstreSprite, monstre.width * monstre.frameX, monstre.height * monstre.frameY, monstre.width, monstre.height, monstre.x, monstre.y, monstre.width, monstre.height);
+    }
+    if (etage1 && monstre2.pointVie > 0) {
+    drawSprite(monstre2Sprite, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, monstre2.x, monstre2.y, monstre2.width, monstre2.height);
+    }
 
 
-    
+    if (arrowShot) {
+        drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, playerCurrentX,playerCurrentY, Arrow.width, Arrow.height+12);
+        if (monstre.pointVie > 0) {
+            ctx.fillText("-1 pdv", monstre.x, monstre.y + 50);
+            monstre.pointVie -= 1;
+            Arrow.speed = 6;
+        }
+        if (monstre.pointVie == 0) {
+            ctx.fillText("Mort", monstre.x, monstre.y + 50);
+
+        }
+
+    }
 
 
-if (etage1)
-{
-    movePlayer();
-}
+
+
+    if (etage1) {
+        movePlayer();
+        //monstreMouvement();
+    }
     handlePlayerFrame();
     handleM1Frame();
     handleM2Frame();
     handleM3Frame();
     handleArrowFrame();
     handleMonsterFrame();
-    if (etage1){
-        monstreMouvement();
-    }
     requestAnimationFrame(animate);
     ctx.font = "30px Arial";
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
     ctx.fillText("Niveau :" + player.niveau, 60, 482);
+    /*if (etage1 && monstre.pointVie > 0) {
+        ctx.fillText("Vie: :" + monstre.pointVie, monstre.x, monstre.y);
+    }*/
 
+
+    //angle = Math.atan((monstre.y - player.y) / monstre.x) * (180 / Math.PI)
+    if (etage1){
+    Attaquer();
+    }
+    if (monstre.x <-140)
+    {
+        monstre.x = 676;
+        monstre.pointVie = 100;
+    }
+    if (monstre2.x <-140)
+    {
+        monstre2.x = 676;
+        monstre2.frameX+=1;
+        monstre2.pointVie = 100;
+    }
 }
 animate();
 
@@ -1091,8 +1170,24 @@ function miner() {
     } else if (m3.job < 30) {
         timer = setTimeout(miner, 500);
     }
+
+}
+function Attaquer() {
+    clearTimeout(timer);
+    monstre.moving=true;
+    monstre.x-=monstre2.speed;
+    monstre2.moving=true;
+    monstre2.x-=monstre2.speed;
+    if (monstre.x==380){
+        monstre.speed=0;
+    }
+    if (monstre.pointVie==0) {
+        timer = setTimeout(Attaquer, 2000);
+
+}
 }
 miner();
+
 //////////////////////////// Fin Dessin ////////////////////////////
 
 
@@ -1140,6 +1235,7 @@ function handlePlayerFrame() {
         player.frameX = 0;
     }
 }
+
 function handleM1Frame() {
     if (m1.frameX < 3 && m1.moving) {
         m1.frameX++;
@@ -1147,6 +1243,7 @@ function handleM1Frame() {
         m1.frameX = 0;
     }
 }
+
 function handleM2Frame() {
     if (m2.frameX < 3 && m2.moving) {
         m2.frameX++;
@@ -1154,6 +1251,7 @@ function handleM2Frame() {
         m2.frameX = 0;
     }
 }
+
 function handleM3Frame() {
     if (m3.frameX < 3 && m3.moving) {
         m3.frameX++;
@@ -1161,6 +1259,7 @@ function handleM3Frame() {
         m3.frameX = 0;
     }
 }
+
 function handleArrowFrame() {
     if (Arrow.frameX < 3 && Arrow.moving) {
         Arrow.frameX++;
@@ -1168,47 +1267,47 @@ function handleArrowFrame() {
         Arrow.frameX = 0;
     }
 }
+
 function handleMonsterFrame() {
     if (monstre.frameX < 3 && monstre.moving) {
         monstre.frameX++;
     } else {
         monstre.frameX = 0;
+    }if (monstre2.frameX < 3 && monstre2.moving) {
+        monstre2.frameX++;
+    } else {
+        monstre2.frameX = 0;
     }
 }
-function monstreMouvement(){
+
+function monstreMouvement() {
     clearTimeout(timer);
-    if (etage1) {
-        setTimeout(monstreMouvement,2000);
-    }
     var interx = setInterval(function() {
-    if (monstre.x>player.x){
-        monstre.moving=true;
-        monstre.x-=monstre.speed;
+        if (monstre.x > player.x) {
+            monstre.moving = true;
+            monstre.x -= monstre.speed;
+            setTimeout(monstreMouvement, 2000);
+        } else if (monstre.x < player.x) {
+            monstre.moving = true;
+            monstre.x += monstre.speed;
+            setTimeout(monstreMouvement, 2000);
+        } else if (monstre.y > player.y) {
+            monstre.moving = true;
+            monstre.y -= monstre.speed;
+            setTimeout(monstreMouvement, 2000);
+        } else if (monstre.y < player.y) {
+            monstre.moving = true;
+            monstre.y += monstre.speed;
+            setTimeout(monstreMouvement, 2000);
+        } else {
+            monstre.moving = false;
+            clearInterval(interx);
+
+
         }
-    else if ( monstre.x<player.x){
-        monstre.moving=true;
-        monstre.x+=monstre.speed;
-    }
-    else if (monstre.y>player.y){
-        monstre.moving=true;
-        monstre.y-=monstre.speed;     
-    }
-    else if (monstre.y<player.y){
-        monstre.moving=true;
-        monstre.y+=monstre.speed;     
-    }
-    else {
-        monstre.moving=false;
-        clearInterval(interx);
 
-
-    }
-    
-}, 30);
-
+    }, 30);
 };
-
-
 
 
 
