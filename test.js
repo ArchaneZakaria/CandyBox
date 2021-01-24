@@ -33,11 +33,16 @@ var angle;
 var takePosition = 1;
 var playerCurrentX;
 var playerCurrentY;
+var monstreCurrentX;
+var monstreCurrentY;
 
 /// Angle de rotation de l'arc ///
 
 
-
+const menu = document.getElementById("menu");
+const ctxMenu = menu.getContext("2d");
+menu.width = 1000;
+menu.height = 100;
 
 const positionCanevasX = canvas.offsetLeft;
 const positionCanevasY = canvas.offsetTop;
@@ -122,7 +127,11 @@ popEtagechoix.src = "images/Etage.png";
 const donjon1etage = new Image();
 donjon1etage.src = "images/etage1.jpg";
 
+const menuImage = new Image();
+menuImage.src = "images/ressss.png";
 
+const gunshot = new Image();
+gunshot.src = "images/gunshot.png"
 /////////////:-------------------FIN Les éléments situées dans la carte ( SOURCE IMAGE )------------------/////////:
 
 
@@ -210,8 +219,8 @@ const stop = { //Positionnement du boutton CLOSE du PopUp guilde
 const magasinButton = { //Positionnement du boutton CLOSE du PopUp guilde
     xMin: 301,
     xMax: 400,
-    yMin: 134,
-    yMax: 190
+    yMin: 190,
+    yMax: 246
 }
 
 const closeShopButton = { //Positionnement du boutton CLOSE du magasin
@@ -401,6 +410,18 @@ const monstre2 = {
     pointVie: 100
 }
 const Arrow = {
+
+    x: 476, //position horizontale
+    y: 364, //position verticale
+    width: 32, //la largeur du caractére
+    height: 48, //la hauteur du caractere
+    frameX: 0, //coordonnees horizontal du cadre
+    frameY: 0, //coordonnees vertical du cadre
+    speed: 6,
+    moving: false,
+
+}
+const gun = {
 
     x: 476, //position horizontale
     y: 364, //position verticale
@@ -993,25 +1014,25 @@ canvas.addEventListener("mousemove", function(e) {
 //La fonction principale qui annime le canvas selon les conditions
 
 function animate() {
-
+  ctxMenu.clearRect(0, 0, menu.width, menu.height);
+   ctxMenu.drawImage(menuImage,0,50, menu.width, 60);
     //Dessine les éléments sur le canvas
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
     if (etage1 == 1) {
         ctx.drawImage(donjon1etage, 0, 0, canvas.width, canvas.height);
+        drawSprite(gunshot, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, gun.x, gun.y, monstre2.width, monstre2.height);
+
+
 
     }
     if (etage0 == 1) {
         ctx.drawImage(mineDorImage, 127, 50, 120, 120);
         ctx.drawImage(donjon, 500, -10, 256, 256);
     }
-    if (etage0 == 1 || etage1 == 1) {
-        ctx.drawImage(niveau, -10, 435, 256, 75);
-        ctx.drawImage(or, 550, 435, 256, 75);
-    }
     if (etage0 == 1) {
-        ctx.drawImage(buttonmagasin, 622, 350, 256, 125);
+        ctx.drawImage(buttonmagasin, 622, 400, 256, 140);
     }
     if (condition == 1 && etage0 == 1) {
         ctx.drawImage(guilde, 110, 180, 256, 256);
@@ -1120,15 +1141,24 @@ function animate() {
     handleM3Frame();
     handleArrowFrame();
     handleMonsterFrame();
+    if (etage1){
+    monstreMouvement();
+    }
     requestAnimationFrame(animate);
-    ctx.font = "30px Arial";
+    /*ctx.font = "30px Arial";
     ctx.fillStyle = "yellow";
     ctx.fillText(player.solde, 660, 482);
     ctx.fillText("Niveau :" + player.niveau, 60, 482);
     /*if (etage1 && monstre.pointVie > 0) {
         ctx.fillText("Vie: :" + monstre.pointVie, monstre.x, monstre.y);
     }*/
-
+    /*ctx.fillText("Niveau :" + player.niveau, 60, 482);*/
+        ctxMenu.font = "20px Cursive";
+        ctxMenu.fillText(player.niveau, 215, 87);
+        ctxMenu.fillText(player.solde, 348, 87);
+        ctxMenu.fillText(player.pointVie, 472, 87);
+        ctxMenu.fillText(player.defense, 636, 87);
+        ctxMenu.fillText(player.attack, 786, 87);
 
     //angle = Math.atan((monstre.y - player.y) / monstre.x) * (180 / Math.PI)
     if (etage1){
@@ -1261,10 +1291,10 @@ function handleM3Frame() {
 }
 
 function handleArrowFrame() {
-    if (Arrow.frameX < 3 && Arrow.moving) {
-        Arrow.frameX++;
+    if (Arrow.frameY < 3 && Arrow.moving) {
+        Arrow.frameY++;
     } else {
-        Arrow.frameX = 0;
+        Arrow.frameY = 0;
     }
 }
 
@@ -1281,33 +1311,9 @@ function handleMonsterFrame() {
 }
 
 function monstreMouvement() {
-    clearTimeout(timer);
-    var interx = setInterval(function() {
-        if (monstre.x > player.x) {
-            monstre.moving = true;
-            monstre.x -= monstre.speed;
-            setTimeout(monstreMouvement, 2000);
-        } else if (monstre.x < player.x) {
-            monstre.moving = true;
-            monstre.x += monstre.speed;
-            setTimeout(monstreMouvement, 2000);
-        } else if (monstre.y > player.y) {
-            monstre.moving = true;
-            monstre.y -= monstre.speed;
-            setTimeout(monstreMouvement, 2000);
-        } else if (monstre.y < player.y) {
-            monstre.moving = true;
-            monstre.y += monstre.speed;
-            setTimeout(monstreMouvement, 2000);
-        } else {
-            monstre.moving = false;
-            clearInterval(interx);
-
-
-        }
-
-    }, 30);
+    gun.y-= gun.speed ;
 };
+
 
 
 

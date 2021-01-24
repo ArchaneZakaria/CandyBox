@@ -9,6 +9,15 @@
   transform:translate(-50%,-50%);
   z-index:0;
 }
+#menu{
+  width: 800px vh   ;
+  height:100px vh ;
+  position: absolute;
+  top : 0%;
+  left: 50%;
+  transform:translate(-50%,-50%);
+  z-index:0;
+}
 #videoBG {
   position:absolute;
   z-index: -1;
@@ -119,5 +128,3 @@ a {
   color: teal;
 }
 }
-
-
