@@ -336,7 +336,7 @@ document.addEventListener("click", printMousePos);
 var bienvenue = 0; //Ce champs sera initialement égale a 0
 setTimeout(function() {
     bienvenue = 1;
-}, 20000); //Apres 2s et 200ms sera égale a 1 pour qu'il apparait dans la fonction animate()
+}, 2000); //Apres 2s et 200ms sera égale a 1 pour qu'il apparait dans la fonction animate()
 
 
 
@@ -447,7 +447,7 @@ const monstre2 = {
 }
 const Arrow = {
 
-    x: 476, //position horizontale
+    x: 0, //position horizontale
     y: 364, //position verticale
     width: 32, //la largeur du caractére
     height: 48, //la hauteur du caractere
@@ -516,23 +516,50 @@ canvas.addEventListener("click", function(e) {
     //alert(clickX);
     //alert(clickY);
     //si l'utilisateur clique sur la mine d'or
-    if (clickX > monstre.x - 400 && clickX < monstre.x - 368 && clickY > monstre.y - 250 && clickY < monstre.y - 202 && monstre.pointVie > 0) {
+    if (clickX > monstre.x-400  && clickX < monstre.x-368  && clickY > monstre.y-250 && clickY < monstre.y  && monstre.pointVie>0) {
         arrowShot = 1;
-        playerCurrentX = player.x;
-        playerCurrentY = player.y
-        var inter = setInterval(function() {
-            if (Arrow.y > monstre.y) {
-                Arrow.y -= Arrow.speed;
+        //alert("tir");
+
+        //player.pointVie+=5;
+        playerCurrentX=player.x;
+        playerCurrentY=player.y;
+        Arrow.x=player.x;
+        Arrow.y=player.y;
+       var inter = setInterval(function() {
+         console.log(player.y);
+         console.log(Arrow);
+         console.log(monstre);
+              if (Arrow.y <= monstre.y) {//&&Arrow.y>monstre.y/2
+
+              if (Arrow.x-15<monstre.x) {//monstre.x-239>Arrow.x
+                Arrow.x += (Arrow.speed*2);
+                playerCurrentX+=(Arrow.speed*2);
+              }
+              if (Arrow.x-15>monstre.x) {//monstre.x-239>Arrow.x
+                Arrow.x -= (Arrow.speed*2);
+                playerCurrentX-=(Arrow.speed*2);
+              }
+                Arrow.y += Arrow.speed;
                 Arrow.moving = true;
+               playerCurrentY+=Arrow.speed;
+              //  Arrow.x-400<
 
             }
-            if (Arrow.x < monstre.x) {
-                Arrow.x += Arrow.speed;
-                playerCurrentX += Arrow.speed;
+
+          /*  if (Arrow.y < monstre.y) {
+
+                Arrow.y -= Arrow.speed;
+                playerCurrentY+=Arrow.speed;
                 Arrow.moving = true;
-            } else {
-                Arrow.x = monstre.x - 30;
+            }*/ else {
+              monstre.pointVie -= 25;
+              if(monstre.pointVie==0){
+                player.pointVie+=10;
+              }
+                //Arrow.x = monstre.x - 30;
                 arrowShot = 0;
+                Arrow.y =364;
+                Arrow.x =0;
                 Arrow.moving == false;
                 Arrow.speed = 6;
                 clearInterval(inter);
@@ -540,12 +567,13 @@ canvas.addEventListener("click", function(e) {
 
 
 
-        }, 30);
+        }, 40);
     }
-    if (clickX > monstre2.x - 400 && clickX < monstre2.x - 368 && clickY > monstre2.y - 250 && clickY < monstre2.y - 202 && monstre2.pointVie > 0) {
+    if (clickX > monstre2.x - 400 && clickX < monstre2.x - 368 && clickY > monstre2.y - 250 && clickY < monstre2.y - 202 && monstre2.pointVie>0) {
         arrowShot = 1;
-        playerCurrentX = player.x;
-        playerCurrentY = player.y
+        monstre2.pointVie -= 25;
+        playerCurrentX=player.x;
+        playerCurrentY=player.y
         var inter = setInterval(function() {
             if (Arrow.y > monstre2.y) {
                 Arrow.y -= Arrow.speed;
@@ -554,7 +582,7 @@ canvas.addEventListener("click", function(e) {
             }
             if (Arrow.x < monstre2.x) {
                 Arrow.x += Arrow.speed;
-                playerCurrentX += Arrow.speed;
+                playerCurrentX+=Arrow.speed;
                 Arrow.moving = true;
             } else {
                 Arrow.x = monstre2.x - 30;
@@ -641,7 +669,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le donjon
-    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme==0) {
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme == 0) {
         var inter1 = setInterval(function() {
             if (player.x < 490) {
                 player.x += player.speed;
@@ -681,7 +709,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur decide d'acheter le premier mineur
-    if (clickX > popupGuildeMineur1.xMin && clickX < popupGuildeMineur1.xMax && clickY > popupGuildeMineur1.yMin && clickY < popupGuildeMineur1.yMax && gui == 1 && etage0 == 1) {
+    if (clickX > popupGuildeMineur1.xMin && clickX < popupGuildeMineur1.xMax && clickY > popupGuildeMineur1.yMin && clickY < popupGuildeMineur1.yMax && gui == 1 && etage0 == 1 && m1.dispo == 0) {
         if (player.solde > 10 || player.solde == 10) {
             player.solde -= 10;
             gui = 0;
@@ -692,7 +720,7 @@ canvas.addEventListener("click", function(e) {
 
     }
     //si l'utilisateur decide d'acheter le deuxieme mineur
-    if (clickX > popupGuildeMineur2.xMin && clickX < popupGuildeMineur2.xMax && clickY > popupGuildeMineur2.yMin && clickY < popupGuildeMineur2.yMax && gui == 1 && etage0 == 1) {
+    if (clickX > popupGuildeMineur2.xMin && clickX < popupGuildeMineur2.xMax && clickY > popupGuildeMineur2.yMin && clickY < popupGuildeMineur2.yMax && gui == 1 && etage0 == 1 && m2.dispo == 0) {
         if (player.solde > 20 || player.solde == 20) {
             player.solde -= 20;
             gui = 0;
@@ -703,7 +731,7 @@ canvas.addEventListener("click", function(e) {
 
     }
     //si l'utilisateur decide d'acheter le troisieme mineur
-    if (clickX > popupGuildeMineur3.xMin && clickX < popupGuildeMineur3.xMax && clickY > popupGuildeMineur3.yMin && clickY < popupGuildeMineur3.yMax && gui == 1 && etage0 == 1) {
+    if (clickX > popupGuildeMineur3.xMin && clickX < popupGuildeMineur3.xMax && clickY > popupGuildeMineur3.yMin && clickY < popupGuildeMineur3.yMax && gui == 1 && etage0 == 1 && m3.dispo == 0) {
         if (player.solde > 30 || player.solde == 30) {
             player.solde -= 30;
             gui = 0;
@@ -736,7 +764,11 @@ canvas.addEventListener("click", function(e) {
                 m2.hideMineur = 1;
                 m2.mineurActif = 1;
                 setTimeout(function() {
-                    m2.mineurActif = 0;
+                    //alert('ssxs')
+                    if(m2.job>=30){
+
+                        m2.mineurActif = 0;
+                    }
                 }, 5000);
             }
 
@@ -771,12 +803,12 @@ canvas.addEventListener("click", function(e) {
         }, 30);
     } else if (clickX > travailler.xMin && clickX < travailler.xMax && clickY > travailler.yMin && clickY < travailler.yMax && m1.dispo >= 1 && gui == 0 && etage0 == 1) {
 
-        var inter1 = setInterval(function() {
+        var inter3 = setInterval(function() {
 
             if (m1.y > 88) {
 
                 m1.y -= m1.speed;
-                m1.frameY = 3;
+                m1.frameY = 1;
                 m1.moving = true;
 
             }
@@ -789,14 +821,18 @@ canvas.addEventListener("click", function(e) {
             } else if (m1.x < 240 + m1.speed && m1.y < 88 + m1.speed) {
 
                 m1.moving = false;
-                clearInterval(inter);
+                clearInterval(inter3);
                 m1.hideMineur = 1;
                 m1.mineurActif = 1;
                 setTimeout(function() {
-                    m1.mineurActif = 0;
-                }, 5000);
-            }
+                    if(m1.job>=30){
+                        m1.mineurActif = 0;
 
+                    }
+                }, 5000);
+
+
+            }
         }, 30);
     }
     //si la popUp du magasin est afficher
@@ -901,12 +937,14 @@ canvas.addEventListener("click", function(e) {
         etage2 = 0;
     }
     if (clickX > popEtage2.xMin && clickX < popEtage2.xMax && clickY > popEtage2.yMin && clickY < popEtage2.yMax && donjonPopup == 1) {
+
+        etage2 = 1;
         music2.play();
         music1.pause();
         bgm.pause();
         etage1 = 0;
         etage0 = 0;
-        etage2 = 1;
+
     }
 
 
@@ -937,9 +975,8 @@ canvas.addEventListener("click", function(e) {
         donjonPopup = 0;
     }
     if (clickX > closeDonjonButton.xMin && clickX < closeDonjonButton.xMax && clickY > closeDonjonButton.yMin && clickY < closeDonjonButton.yMax && (etage0 == 1)) {
-donjonPopup = 0 ;
+        donjonPopup = 0;
     }
-
 
 
 
@@ -997,7 +1034,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
     //si l'utilisateur srvol sur le donjon
-    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0 && arme== 0 &&armure==0 &&potion==0) {
+    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0 && arme == 0 && armure == 0 && potion == 0) {
 
         canvas.style.cursor = "pointer";
 
@@ -1072,13 +1109,11 @@ canvas.addEventListener("mousemove", function(e) {
         canvas.style.cursor = "pointer";
     } else if (mouseX > popHome.xMin && mouseX < popHome.xMax && mouseY > popHome.yMin && mouseY < popHome.yMax && etage1 == 1) {
         canvas.style.cursor = "pointer";
-    }
-    else if (mouseX > closeDonjonButton.xMin && mouseX < closeDonjonButton.xMax && mouseY > closeDonjonButton.yMin && mouseY < closeDonjonButton.yMax && donjonPopup == 1) {
+    } else if (mouseX > closeDonjonButton.xMin && mouseX < closeDonjonButton.xMax && mouseY > closeDonjonButton.yMin && mouseY < closeDonjonButton.yMax && donjonPopup == 1) {
         canvas.style.cursor = "pointer";
-    }
-
- else {
-
+    } else if (mouseX > closeDonjonButton.xMin && mouseX < closeDonjonButton.xMax && mouseY > closeDonjonButton.yMin && mouseY < closeDonjonButton.yMax && donjonPopup == 1) {
+        canvas.style.cursor = "pointer";
+    } else {
         canvas.style.cursor = "default";
     }
 });
@@ -1104,8 +1139,13 @@ function animate() {
         ctx.drawImage(donjon2etage, 0, 0, canvas.width, canvas.height);
     }
     if (etage1 == 1) {
+
         ctx.drawImage(donjon1etage, 0, 0, canvas.width, canvas.height);
         drawSprite(gunshot, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, gun.x, gun.y, monstre2.width, monstre2.height);
+    }
+
+    if (etage2 == 1) {
+        ctx.drawImage(donjon2etage, 0, 0, canvas.width, canvas.height);
     }
     if (etageBoss == 1) {
         ctx.drawImage(donjon3etage, 0, 0, canvas.width, canvas.height);
@@ -1194,7 +1234,7 @@ function animate() {
     if (arrowShot) {
         drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, playerCurrentX, playerCurrentY, Arrow.width, Arrow.height + 12);
         if (monstre.pointVie > 0) {
-            ctx.fillText("-1 pdv", monstre.x, monstre.y + 50);
+            ctx.fillText("TIR REUSSI", monstre.x, monstre.y + 50);
             monstre.pointVie -= 1;
             Arrow.speed = 6;
         }
@@ -1258,15 +1298,15 @@ animate();
 
 function miner() {
     clearTimeout(timer);
-    if (m1.mineurActif == 1) {
+    if (m1.mineurActif == 1 && m1.job < 30) {
         m1.job++;
         player.solde += 1;
     }
-    if (m2.mineurActif == 1) {
+    if (m2.mineurActif == 1&& m2.job < 30) {
         m2.job++;
         player.solde += 2;
     }
-    if (m3.mineurActif == 1) {
+    if (m3.mineurActif == 1&& m3.job < 30) {
         m3.job++;
         player.solde += 3;
     }
@@ -1274,7 +1314,7 @@ function miner() {
     if (m1.job < 30) {
         timer = setTimeout(miner, 2000);
     } else if (m2.job < 30) {
-        timer = setTimeout(miner, 1000);
+        timer = setTimeout(miner, 2000);
     } else if (m3.job < 30) {
         timer = setTimeout(miner, 500);
     }
@@ -1284,9 +1324,9 @@ function miner() {
 function Attaquer() {
     clearTimeout(timer);
     monstre.moving = true;
-    monstre.x -= monstre2.speed;
+    monstre.x -= 3;
     monstre2.moving = true;
-    monstre2.x -= monstre2.speed;
+    monstre2.x -= 3;
     if (monstre.x == 380) {
         monstre.speed = 0;
     }
