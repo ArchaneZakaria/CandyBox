@@ -7,6 +7,7 @@ canvas.width = 800;
 canvas.height = 500;
 //canvas2.width = 800;
 //canvas2.height = 500;
+var AutorisationCombat=0;
 var gameover = 0;
 var condition = 0;
 var gui = 0;
@@ -363,7 +364,8 @@ const player = {
     niveau: 1,
     attack: 0,
     defense: 0,
-    pointVie: 100
+    pointVie: 100,
+    xp:0
 
 
 }
@@ -552,7 +554,10 @@ canvas.addEventListener("click", function(e) {
                 playerCurrentY+=Arrow.speed;
                 Arrow.moving = true;
             }*/ else {
-              monstre.pointVie -= 25;
+                if(monstre.pointVie>0){
+                    monstre.pointVie -= 25;
+
+                }
               if(monstre.pointVie==0){
                 player.pointVie+=10;
               }
@@ -669,7 +674,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le donjon
-    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme == 0) {
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme == 0 && gui==0 &&AutorisationCombat==0) {
         var inter1 = setInterval(function() {
             if (player.x < 490) {
                 player.x += player.speed;
@@ -693,7 +698,9 @@ canvas.addEventListener("click", function(e) {
 
     }
 
-
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme == 0 && gui==0 &&AutorisationCombat==1) {
+        alert("Veuillez attendre que le mineur termine !");
+    }
 
     //si l'utilisateur decide de fermer la popup des mineurs
 
@@ -763,11 +770,13 @@ canvas.addEventListener("click", function(e) {
                 clearInterval(inter2);
                 m2.hideMineur = 1;
                 m2.mineurActif = 1;
+                AutorisationCombat=1;
                 setTimeout(function() {
                     //alert('ssxs')
                     if(m2.job>=30){
 
                         m2.mineurActif = 0;
+                        AutorisationCombat=0;
                     }
                 }, 5000);
             }
@@ -796,8 +805,10 @@ canvas.addEventListener("click", function(e) {
                 clearInterval(inter3);
                 m3.hideMineur = 1;
                 m3.mineurActif = 1;
+                AutorisationCombat=1;
                 setTimeout(function() {
                     m3.mineurActif = 0;
+                    AutorisationCombat=0;
                 }, 5000);
             }
         }, 30);
@@ -824,9 +835,11 @@ canvas.addEventListener("click", function(e) {
                 clearInterval(inter3);
                 m1.hideMineur = 1;
                 m1.mineurActif = 1;
+                AutorisationCombat=1;
                 setTimeout(function() {
                     if(m1.job>=30){
                         m1.mineurActif = 0;
+                        AutorisationCombat=0;
 
                     }
                 }, 5000);
@@ -1103,7 +1116,7 @@ canvas.addEventListener("mousemove", function(e) {
         canvas.style.cursor = "pointer";
     } else if (mouseX > popEtage1.xMin && mouseX < popEtage1.xMax && mouseY > popEtage1.yMin && mouseY < popEtage1.yMax && donjonPopup == 1) {
         canvas.style.cursor = "pointer";
-    } else if (mouseX > popEtage2.xMin && mouseX < popEtage2.xMax && mouseY > popEtageé.yMin && mouseY < popEtage2.yMax && donjonPopup == 1) {
+    } else if (mouseX > popEtage2.xMin && mouseX < popEtage2.xMax && mouseY > popEtage2.yMin && mouseY < popEtage2.yMax && donjonPopup == 1) {
         canvas.style.cursor = "pointer";
     } else if (mouseX > popEtageBoss.xMin && mouseX < popEtageBoss.xMax && mouseY > popEtageBoss.yMin && mouseY < popEtageBoss.yMax && donjonPopup == 1) {
         canvas.style.cursor = "pointer";
@@ -1129,6 +1142,14 @@ canvas.addEventListener("mousemove", function(e) {
 //La fonction principale qui annime le canvas selon les conditions
 
 function animate() {
+    if(player.pointVie==0){
+        alert('GAME OVER ');
+        player.pointVie=100;
+        etage1 = 0;
+        etage2 = 0;
+        etage0 = 1;
+        etageBoss = 0;
+    }
     ctxMenu.clearRect(0, 0, menu.width, menu.height);
     ctxMenu.drawImage(menuImage, 0, 50, menu.width, 60);
     //Dessine les éléments sur le canvas
@@ -1223,7 +1244,7 @@ function animate() {
         donjonPopup = 0;
         player.speed = 4;
     }
-    if (etage1 && monstre.pointVie > 0) {
+    if ((etage1 ||etage2)&& monstre.pointVie > 0) {
         drawSprite(monstreSprite, monstre.width * monstre.frameX, monstre.height * monstre.frameY, monstre.width, monstre.height, monstre.x, monstre.y, monstre.width, monstre.height);
     }
     if (etage1 && monstre2.pointVie > 0) {
@@ -1235,10 +1256,12 @@ function animate() {
         drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, playerCurrentX, playerCurrentY, Arrow.width, Arrow.height + 12);
         if (monstre.pointVie > 0) {
             ctx.fillText("TIR REUSSI", monstre.x, monstre.y + 50);
-            monstre.pointVie -= 1;
+            //monstre.pointVie -= 1;
             Arrow.speed = 6;
         }
         if (monstre.pointVie == 0) {
+            //alert(player.pointVie);
+            //player.pointVie+=10;
             ctx.fillText("Mort", monstre.x, monstre.y + 50);
 
         }
@@ -1246,22 +1269,17 @@ function animate() {
     }
     if (etage1 || etage2 || etageBoss) {
         ctx.drawImage(home, 670, -37, 180, 130);
-    }
-
-
-
-
-    if (etage1 || etage2 || etageBoss) {
         movePlayer();
-        //monstreMouvement();
     }
+
+    
     handlePlayerFrame();
     handleM1Frame();
     handleM2Frame();
     handleM3Frame();
     handleArrowFrame();
     handleMonsterFrame();
-    if (etage1) {
+    if (etage1 || etage2) {
         monstreMouvement();
     }
     requestAnimationFrame(animate);
@@ -1281,10 +1299,16 @@ function animate() {
     ctxMenu.fillText(player.attack, 786, 87);
 
     //angle = Math.atan((monstre.y - player.y) / monstre.x) * (180 / Math.PI)
-    if (etage1) {
+    if (etage1 || etage2) {
         Attaquer();
     }
     if (monstre.x < -140) {
+        if(monstre.pointVie>0)
+        {
+            player.pointVie-=10;
+        }else{
+            player.xp+=1;
+        }
         monstre.x = 676;
         monstre.pointVie = 100;
     }
@@ -1293,10 +1317,23 @@ function animate() {
         monstre2.frameX += 1;
         monstre2.pointVie = 100;
     }
+    if(player.xp==5){
+        alert('Partie gagnée');
+        alert('Votre niveau actuel : 2');
+        player.niveau=2;
+        etage2 = 1;
+        music2.play();
+        music1.pause();
+        bgm.pause();
+        etage1 = 0;
+        etage0 = 0;
+        player.xp=0;
+    }
 }
 animate();
 
 function miner() {
+    
     clearTimeout(timer);
     if (m1.mineurActif == 1 && m1.job < 30) {
         m1.job++;
@@ -1318,15 +1355,40 @@ function miner() {
     } else if (m3.job < 30) {
         timer = setTimeout(miner, 500);
     }
+    if(m1.job>=30){
+        
+        m1.mineurActif = 0;
+        AutorisationCombat=0;
+
+    }
+    if(m2.job>=30){
+        
+        m2.mineurActif = 0;
+        AutorisationCombat=0;
+
+    }
+    if(m3.job>=30){
+        
+        m3.mineurActif = 0;
+        AutorisationCombat=0;
+
+    }
 
 }
 
 function Attaquer() {
     clearTimeout(timer);
     monstre.moving = true;
-    monstre.x -= 3;
-    monstre2.moving = true;
-    monstre2.x -= 3;
+    if(etage1==1){
+        monstre.x -= 3;
+    }
+    if(etage2==1){
+        monstre.x -= 5;
+    }
+    
+    ctx.fillText("Pdv:"+monstre.pointVie, monstre.x+6, monstre.y - 5);
+    //monstre2.moving = true;
+    //monstre2.x -= 3;
     if (monstre.x == 380) {
         monstre.speed = 0;
     }
