@@ -27,15 +27,18 @@ var arrowShot = 0;
 var donjonPopup = 0;
 var etage1 = 0;
 var etage0 = 1;
+var etage2 = 0;
+var etageBoss = 0;
 var music1 = document.getElementById("music1");
 var bgm = document.getElementById("bgm");
+var music2 = document.getElementById("music2");
+var music3 = document.getElementById("music3");
 var angle;
 var takePosition = 1;
 var playerCurrentX;
 var playerCurrentY;
 var monstreCurrentX;
 var monstreCurrentY;
-
 /// Angle de rotation de l'arc ///
 
 
@@ -127,11 +130,20 @@ popEtagechoix.src = "images/Etage.png";
 const donjon1etage = new Image();
 donjon1etage.src = "images/etage1.jpg";
 
+const donjon2etage = new Image();
+donjon2etage.src = "images/etage2.jpg";
+const donjon3etage = new Image();
+donjon3etage.src = "images/etageboss.jpg";
+
 const menuImage = new Image();
 menuImage.src = "images/ressss.png";
 
 const gunshot = new Image();
 gunshot.src = "images/gunshot.png"
+
+
+const home = new Image();
+home.src = "images/home.png"
 /////////////:-------------------FIN Les éléments situées dans la carte ( SOURCE IMAGE )------------------/////////:
 
 
@@ -278,7 +290,31 @@ const popEtage1 = { //Positionnement du troisiéme button du magasin
     xMin: -64,
     xMax: 64,
     yMin: -108,
-    yMax: -33
+    yMax: -10
+}
+const popEtage2 = { //Positionnement du troisiéme button du magasin
+    xMin: -64,
+    xMax: 64,
+    yMin: 10,
+    yMax: 90
+}
+const popEtageBoss = { //Positionnement du troisiéme button du magasin
+    xMin: -64,
+    xMax: 64,
+    yMin: 110,
+    yMax: 130
+}
+const popHome = { //Positionnement du troisiéme button du magasin
+    xMin: 320,
+    xMax: 400,
+    yMin: -260,
+    yMax: -190
+}
+const closeDonjonButton = {
+    xMin: 122,
+    xMax: 148,
+    yMin: -155,
+    yMax: -120
 }
 
 
@@ -446,10 +482,6 @@ function drawSprite(img, sX, sY, sW, sH, dX, dY, dW, dH) {
 if (etage1 == 0) {
     bgm.play();
 }
-if (etage1 == 1 && etage0 == 0) {
-    bgm.currenttime = 0;
-    bgm = music1;
-}
 
 var sonClic = document.getElementById("sonclic");
 var sonTest = true;
@@ -484,10 +516,10 @@ canvas.addEventListener("click", function(e) {
     //alert(clickX);
     //alert(clickY);
     //si l'utilisateur clique sur la mine d'or
-    if (clickX > monstre.x - 400 && clickX < monstre.x - 368 && clickY > monstre.y - 250 && clickY < monstre.y - 202 && monstre.pointVie>0) {
+    if (clickX > monstre.x - 400 && clickX < monstre.x - 368 && clickY > monstre.y - 250 && clickY < monstre.y - 202 && monstre.pointVie > 0) {
         arrowShot = 1;
-        playerCurrentX=player.x;
-        playerCurrentY=player.y
+        playerCurrentX = player.x;
+        playerCurrentY = player.y
         var inter = setInterval(function() {
             if (Arrow.y > monstre.y) {
                 Arrow.y -= Arrow.speed;
@@ -496,7 +528,7 @@ canvas.addEventListener("click", function(e) {
             }
             if (Arrow.x < monstre.x) {
                 Arrow.x += Arrow.speed;
-                playerCurrentX+=Arrow.speed;
+                playerCurrentX += Arrow.speed;
                 Arrow.moving = true;
             } else {
                 Arrow.x = monstre.x - 30;
@@ -510,10 +542,10 @@ canvas.addEventListener("click", function(e) {
 
         }, 30);
     }
-    if (clickX > monstre2.x - 400 && clickX < monstre2.x - 368 && clickY > monstre2.y - 250 && clickY < monstre2.y - 202 && monstre2.pointVie>0) {
+    if (clickX > monstre2.x - 400 && clickX < monstre2.x - 368 && clickY > monstre2.y - 250 && clickY < monstre2.y - 202 && monstre2.pointVie > 0) {
         arrowShot = 1;
-        playerCurrentX=player.x;
-        playerCurrentY=player.y
+        playerCurrentX = player.x;
+        playerCurrentY = player.y
         var inter = setInterval(function() {
             if (Arrow.y > monstre2.y) {
                 Arrow.y -= Arrow.speed;
@@ -522,7 +554,7 @@ canvas.addEventListener("click", function(e) {
             }
             if (Arrow.x < monstre2.x) {
                 Arrow.x += Arrow.speed;
-                playerCurrentX+=Arrow.speed;
+                playerCurrentX += Arrow.speed;
                 Arrow.moving = true;
             } else {
                 Arrow.x = monstre2.x - 30;
@@ -576,7 +608,7 @@ canvas.addEventListener("click", function(e) {
     }
     //SI l'utilisateur clique sur la guilde
 
-    if (clickX > Guilde.xMin && clickX < Guilde.xMax && clickY > Guilde.yMin && clickY < Guilde.yMax && etage0 == 1) {
+    if (clickX > Guilde.xMin && clickX < Guilde.xMax && clickY > Guilde.yMin && clickY < Guilde.yMax && etage0 == 1 && condition == 1) {
         var inter3 = setInterval(function() {
             if (player.y < 350) {
                 player.y += player.speed;
@@ -609,7 +641,7 @@ canvas.addEventListener("click", function(e) {
 
 
     //si l'utilisateur clique sur le donjon
-    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1) {
+    if (clickX > Donjon.xMin && clickX < Donjon.xMax && clickY > Donjon.yMin && clickY < Donjon.yMax && etage0 == 1 && donjonPopup == 0 && arme==0) {
         var inter1 = setInterval(function() {
             if (player.x < 490) {
                 player.x += player.speed;
@@ -767,10 +799,6 @@ canvas.addEventListener("click", function(e) {
 
         }, 30);
     }
-
-
-
-
     //si la popUp du magasin est afficher
     if (arme == 1) {
 
@@ -865,14 +893,53 @@ canvas.addEventListener("click", function(e) {
 
 
     }
-    if (clickX > popEtage1.xMin && clickX < popEtage1.xMax && clickY > popEtage1.yMin && clickY < popEtage1.yMax) {
+    if (clickX > popEtage1.xMin && clickX < popEtage1.xMax && clickY > popEtage1.yMin && clickY < popEtage1.yMax && donjonPopup == 1) {
         music1.play();
         bgm.pause();
-
-
         etage1 = 1;
         etage0 = 0;
+        etage2 = 0;
     }
+    if (clickX > popEtage2.xMin && clickX < popEtage2.xMax && clickY > popEtage2.yMin && clickY < popEtage2.yMax && donjonPopup == 1) {
+        music2.play();
+        music1.pause();
+        bgm.pause();
+        etage1 = 0;
+        etage0 = 0;
+        etage2 = 1;
+    }
+
+
+    if (clickX > popEtageBoss.xMin && clickX < popEtageBoss.xMax && clickY > popEtageBoss.yMin && clickY < popEtageBoss.yMax && donjonPopup == 1) {
+        music2.pause();
+        music1.pause();
+        music3.play();
+        bgm.pause();
+        etage1 = 0;
+        etage0 = 0;
+        etage2 = 0;
+        etageBoss = 1;
+        donjonPopup = 0;
+
+    }
+
+
+    if (clickX > popHome.xMin && clickX < popHome.xMax && clickY > popHome.yMin && clickY < popHome.yMax && (etage1 == 1 || etage2 == 1 || etageBoss == 1)) {
+        etage1 = 0;
+        etage2 = 0;
+        etage0 = 1;
+        etageBoss = 0;
+        music2.pause();
+        music1.pause();
+        music3.pause();
+        bgm.currenttime = 0;
+        bgm.play();
+        donjonPopup = 0;
+    }
+    if (clickX > closeDonjonButton.xMin && clickX < closeDonjonButton.xMax && clickY > closeDonjonButton.yMin && clickY < closeDonjonButton.yMax && (etage0 == 1)) {
+donjonPopup = 0 ;
+    }
+
 
 
 
@@ -930,7 +997,7 @@ canvas.addEventListener("mousemove", function(e) {
 
 
     //si l'utilisateur srvol sur le donjon
-    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0 && arme == 0) {
+    else if (mouseX > Donjon.xMin && mouseX < Donjon.xMax && mouseY > Donjon.yMin && mouseY < Donjon.yMax && player.cadeauObtenu == true && gui == 0 && arme== 0 &&armure==0 &&potion==0) {
 
         canvas.style.cursor = "pointer";
 
@@ -997,7 +1064,20 @@ canvas.addEventListener("mousemove", function(e) {
     //Si l'utilisateur survol le boutton de la troisiéme option du shop
     else if (mouseX > thirdShopButton.xMin && mouseX < thirdShopButton.xMax && mouseY > thirdShopButton.yMin && mouseY < thirdShopButton.yMax && arme == 1) {
         canvas.style.cursor = "pointer";
-    } else {
+    } else if (mouseX > popEtage1.xMin && mouseX < popEtage1.xMax && mouseY > popEtage1.yMin && mouseY < popEtage1.yMax && donjonPopup == 1) {
+        canvas.style.cursor = "pointer";
+    } else if (mouseX > popEtage2.xMin && mouseX < popEtage2.xMax && mouseY > popEtageé.yMin && mouseY < popEtage2.yMax && donjonPopup == 1) {
+        canvas.style.cursor = "pointer";
+    } else if (mouseX > popEtageBoss.xMin && mouseX < popEtageBoss.xMax && mouseY > popEtageBoss.yMin && mouseY < popEtageBoss.yMax && donjonPopup == 1) {
+        canvas.style.cursor = "pointer";
+    } else if (mouseX > popHome.xMin && mouseX < popHome.xMax && mouseY > popHome.yMin && mouseY < popHome.yMax && etage1 == 1) {
+        canvas.style.cursor = "pointer";
+    }
+    else if (mouseX > closeDonjonButton.xMin && mouseX < closeDonjonButton.xMax && mouseY > closeDonjonButton.yMin && mouseY < closeDonjonButton.yMax && donjonPopup == 1) {
+        canvas.style.cursor = "pointer";
+    }
+
+ else {
 
         canvas.style.cursor = "default";
     }
@@ -1014,24 +1094,25 @@ canvas.addEventListener("mousemove", function(e) {
 //La fonction principale qui annime le canvas selon les conditions
 
 function animate() {
-  ctxMenu.clearRect(0, 0, menu.width, menu.height);
-   ctxMenu.drawImage(menuImage,0,50, menu.width, 60);
+    ctxMenu.clearRect(0, 0, menu.width, menu.height);
+    ctxMenu.drawImage(menuImage, 0, 50, menu.width, 60);
     //Dessine les éléments sur le canvas
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+    if (etage2 == 1) {
+        ctx.drawImage(donjon2etage, 0, 0, canvas.width, canvas.height);
+    }
     if (etage1 == 1) {
         ctx.drawImage(donjon1etage, 0, 0, canvas.width, canvas.height);
         drawSprite(gunshot, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, gun.x, gun.y, monstre2.width, monstre2.height);
-
-
-
+    }
+    if (etageBoss == 1) {
+        ctx.drawImage(donjon3etage, 0, 0, canvas.width, canvas.height);
     }
     if (etage0 == 1) {
         ctx.drawImage(mineDorImage, 127, 50, 120, 120);
         ctx.drawImage(donjon, 500, -10, 256, 256);
-    }
-    if (etage0 == 1) {
         ctx.drawImage(buttonmagasin, 622, 400, 256, 140);
     }
     if (condition == 1 && etage0 == 1) {
@@ -1054,10 +1135,6 @@ function animate() {
         potion = 0;
         arme = 0;
     }
-
-
-    //Dessine le sprite "personnage"
-
 
     if (gui == 1 && etage0 == 1) {
         ctx.drawImage(popguilde, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
@@ -1098,11 +1175,11 @@ function animate() {
     if (bienvenue == 1 && etage0 == 1) {
         ctx.drawImage(popup, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
     }
-    if (donjonPopup == 1 && etage1 == 0) {
+    if (donjonPopup == 1 && etage1 == 0 && etage2 == 0) {
         ctx.drawImage(popEtagechoix, canvas.width / 2 - 150, canvas.height / 2 - 150, 300, 300);
         etage0 == 0;
     }
-    if (etage1 == 1) {
+    if (etage1 || etage2 || etageBoss) {
         donjonPopup = 0;
         player.speed = 4;
     }
@@ -1110,12 +1187,12 @@ function animate() {
         drawSprite(monstreSprite, monstre.width * monstre.frameX, monstre.height * monstre.frameY, monstre.width, monstre.height, monstre.x, monstre.y, monstre.width, monstre.height);
     }
     if (etage1 && monstre2.pointVie > 0) {
-    drawSprite(monstre2Sprite, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, monstre2.x, monstre2.y, monstre2.width, monstre2.height);
+        drawSprite(monstre2Sprite, monstre2.width * monstre2.frameX, monstre2.height * monstre2.frameY, monstre2.width, monstre2.height, monstre2.x, monstre2.y, monstre2.width, monstre2.height);
     }
 
 
     if (arrowShot) {
-        drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, playerCurrentX,playerCurrentY, Arrow.width, Arrow.height+12);
+        drawSprite(fleche, Arrow.width * Arrow.frameX, Arrow.height * Arrow.frameY, Arrow.width, Arrow.height, playerCurrentX, playerCurrentY, Arrow.width, Arrow.height + 12);
         if (monstre.pointVie > 0) {
             ctx.fillText("-1 pdv", monstre.x, monstre.y + 50);
             monstre.pointVie -= 1;
@@ -1127,11 +1204,14 @@ function animate() {
         }
 
     }
+    if (etage1 || etage2 || etageBoss) {
+        ctx.drawImage(home, 670, -37, 180, 130);
+    }
 
 
 
 
-    if (etage1) {
+    if (etage1 || etage2 || etageBoss) {
         movePlayer();
         //monstreMouvement();
     }
@@ -1141,8 +1221,8 @@ function animate() {
     handleM3Frame();
     handleArrowFrame();
     handleMonsterFrame();
-    if (etage1){
-    monstreMouvement();
+    if (etage1) {
+        monstreMouvement();
     }
     requestAnimationFrame(animate);
     /*ctx.font = "30px Arial";
@@ -1153,26 +1233,24 @@ function animate() {
         ctx.fillText("Vie: :" + monstre.pointVie, monstre.x, monstre.y);
     }*/
     /*ctx.fillText("Niveau :" + player.niveau, 60, 482);*/
-        ctxMenu.font = "20px Cursive";
-        ctxMenu.fillText(player.niveau, 215, 87);
-        ctxMenu.fillText(player.solde, 348, 87);
-        ctxMenu.fillText(player.pointVie, 472, 87);
-        ctxMenu.fillText(player.defense, 636, 87);
-        ctxMenu.fillText(player.attack, 786, 87);
+    ctxMenu.font = "20px Cursive";
+    ctxMenu.fillText(player.niveau, 215, 87);
+    ctxMenu.fillText(player.solde, 348, 87);
+    ctxMenu.fillText(player.pointVie, 472, 87);
+    ctxMenu.fillText(player.defense, 636, 87);
+    ctxMenu.fillText(player.attack, 786, 87);
 
     //angle = Math.atan((monstre.y - player.y) / monstre.x) * (180 / Math.PI)
-    if (etage1){
-    Attaquer();
+    if (etage1) {
+        Attaquer();
     }
-    if (monstre.x <-140)
-    {
+    if (monstre.x < -140) {
         monstre.x = 676;
         monstre.pointVie = 100;
     }
-    if (monstre2.x <-140)
-    {
+    if (monstre2.x < -140) {
         monstre2.x = 676;
-        monstre2.frameX+=1;
+        monstre2.frameX += 1;
         monstre2.pointVie = 100;
     }
 }
@@ -1202,19 +1280,20 @@ function miner() {
     }
 
 }
+
 function Attaquer() {
     clearTimeout(timer);
-    monstre.moving=true;
-    monstre.x-=monstre2.speed;
-    monstre2.moving=true;
-    monstre2.x-=monstre2.speed;
-    if (monstre.x==380){
-        monstre.speed=0;
+    monstre.moving = true;
+    monstre.x -= monstre2.speed;
+    monstre2.moving = true;
+    monstre2.x -= monstre2.speed;
+    if (monstre.x == 380) {
+        monstre.speed = 0;
     }
-    if (monstre.pointVie==0) {
+    if (monstre.pointVie == 0) {
         timer = setTimeout(Attaquer, 2000);
 
-}
+    }
 }
 miner();
 
@@ -1303,7 +1382,8 @@ function handleMonsterFrame() {
         monstre.frameX++;
     } else {
         monstre.frameX = 0;
-    }if (monstre2.frameX < 3 && monstre2.moving) {
+    }
+    if (monstre2.frameX < 3 && monstre2.moving) {
         monstre2.frameX++;
     } else {
         monstre2.frameX = 0;
@@ -1311,9 +1391,8 @@ function handleMonsterFrame() {
 }
 
 function monstreMouvement() {
-    gun.y-= gun.speed ;
+    gun.y -= gun.speed;
 };
-
 
 
 
